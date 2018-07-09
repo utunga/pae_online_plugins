@@ -1,0 +1,3 @@
+[submodule "everything_directory"]
+	path = everything_directory
+	url = git@github.com:utunga/everything_directory.git
