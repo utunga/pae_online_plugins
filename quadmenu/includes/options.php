@@ -6,8 +6,7 @@ if (!defined('ABSPATH')) {
 
 class QuadMenu_Options {
 
-    private $themes_defaults = array();
-    private $locations_defaults = array();
+    private $defaults = array();
 
     public function __construct() {
 
@@ -25,19 +24,7 @@ class QuadMenu_Options {
         add_filter('redux/options/' . QUADMENU_OPTIONS . '/sections', array($this, 'responsive'));
         add_filter('redux/options/' . QUADMENU_OPTIONS . '/sections', array($this, 'themes'));
         add_filter('redux/options/' . QUADMENU_OPTIONS . '/sections', array($this, 'css'));
-        add_filter('redux/options/' . QUADMENU_OPTIONS . '/sections', array($this, '_override_icon'), 1000);
         add_filter('redux/page/' . QUADMENU_OPTIONS . '/form/before', array($this, 'remove'));
-    }
-
-    function _override_icon($sections) {
-
-        foreach ($sections as $id => $section) {
-            if (isset($section['id']) && $section['id'] == 'import/export') {
-                $sections[$id]['icon'] = 'test';
-            }
-        }
-
-        return $sections;
     }
 
     // Comaptibility with old versions
@@ -100,7 +87,7 @@ class QuadMenu_Options {
 
     function configuration($sections) {
 
-        $defaults = apply_filters('quadmenu_default_options', array());
+        $this->defaults = apply_filters('quadmenu_default_options', array());
 
         $sections[] = array(
             //'customizer' => true,
@@ -117,7 +104,7 @@ class QuadMenu_Options {
                     'type' => 'switch',
                     'title' => esc_html__('Viewport', 'quadmenu'),
                     'subtitle' => esc_html__('Include the viewport meta tag in site head.', 'quadmenu'),
-                    'default' => (bool) $defaults['viewport'],
+                    'default' => (bool) $this->defaults['viewport'],
                 ),
                 array(
                     'customizer' => false,
@@ -127,7 +114,7 @@ class QuadMenu_Options {
                     'title' => esc_html__('Stylesheet', 'quadmenu'),
                     'subtitle' => esc_html__('Load styles in your theme.', 'quadmenu'),
                     'compiler' => false,
-                    'default' => (bool) $defaults['styles'],
+                    'default' => (bool) $this->defaults['styles'],
                 ),
                 array(
                     'customizer' => true,
@@ -142,7 +129,7 @@ class QuadMenu_Options {
                         '=',
                         1
                     ),
-                    'default' => (bool) $defaults['styles_normalize'],
+                    'default' => (bool) $this->defaults['styles_normalize'],
                 ),
                 array(
                     'customizer' => true,
@@ -157,7 +144,7 @@ class QuadMenu_Options {
                         '=',
                         1
                     ),
-                    'default' => (bool) $defaults['styles_widgets'],
+                    'default' => (bool) $this->defaults['styles_widgets'],
                 ),
                 array(
                     'customizer' => true,
@@ -167,7 +154,7 @@ class QuadMenu_Options {
                     'type' => 'switch',
                     'title' => esc_html__('Perfect ScrollBar', 'quadmenu'),
                     'subtitle' => esc_html__('Load Perfect scroll bar files.', 'quadmenu'),
-                    'default' => (bool) $defaults['styles_pscrollbar'],
+                    'default' => (bool) $this->defaults['styles_pscrollbar'],
                 ),
                 array(
                     'customizer' => false,
@@ -176,7 +163,7 @@ class QuadMenu_Options {
                     'type' => 'switch',
                     'title' => esc_html__('OWL Carousel', 'quadmenu'),
                     'subtitle' => esc_html__('Load OWL Carousel files.', 'quadmenu'),
-                    'default' => (bool) $defaults['styles_owlcarousel'],
+                    'default' => (bool) $this->defaults['styles_owlcarousel'],
                 ),
                 array(
                     'customizer' => false,
@@ -194,7 +181,7 @@ class QuadMenu_Options {
                         '=',
                         1
                     ),
-                    'default' => $defaults['styles_icons'],
+                    'default' => $this->defaults['styles_icons'],
                     'validate' => 'no_special_chars',
                 ),
             ),
@@ -205,7 +192,7 @@ class QuadMenu_Options {
 
     function css($sections) {
 
-        $defaults = apply_filters('quadmenu_default_options', array());
+        $this->defaults = apply_filters('quadmenu_default_options', array());
 
         $sections[] = array(
             'heading' => false,
@@ -224,7 +211,7 @@ class QuadMenu_Options {
                     'title' => esc_html__('Custom CSS', 'quadmenu'),
                     'subtitle' => esc_html__('Quickly add some CSS to your theme by adding it to this block.', 'quadmenu'),
                     'theme' => 'chrome',
-                    'default' => $defaults['css']
+                    'default' => $this->defaults['css']
                 ),
             ),
         );
@@ -234,9 +221,12 @@ class QuadMenu_Options {
 
     function locations($sections) {
 
-        global $_wp_registered_nav_menus, $quadmenu;
+        global $_wp_registered_nav_menus;
 
-        if (count($_wp_registered_nav_menus) < 1)
+        if (!is_array($_wp_registered_nav_menus))
+            return $sections;
+
+        if (!count($_wp_registered_nav_menus))
             return $sections;
 
         $theme = get_stylesheet();
@@ -249,9 +239,11 @@ class QuadMenu_Options {
 
             foreach ($current_location_defaults as $key => $value) {
 
-                $this->locations_defaults["{$location}_{$key}"] = $value;
+                $this->defaults["{$location}_{$key}"] = $value;
             }
         }
+
+        $this->defaults = apply_filters('quadmenu_default_options', $this->defaults);
 
         foreach ($_wp_registered_nav_menus as $location => $name) {
 
@@ -271,7 +263,7 @@ class QuadMenu_Options {
                         'type' => 'switch',
                         'title' => esc_html__('Integration', 'quadmenu'),
                         'subtitle' => esc_html__('Integrate QuadMenu in this theme location.', 'quadmenu'),
-                        'default' => $this->locations_defaults[$location . '_integration'],
+                        'default' => $this->defaults[$location . '_integration'],
                     ),
                     array(
                         'customizer' => true,
@@ -280,7 +272,7 @@ class QuadMenu_Options {
                         'type' => 'switch',
                         'title' => esc_html__('Conflicts', 'quadmenu'),
                         'subtitle' => esc_html__('Try to solve conflicts of residual theme style.', 'quadmenu'),
-                        'default' => $this->locations_defaults[$location . '_unwrap'],
+                        'default' => $this->defaults[$location . '_unwrap'],
                         'required' => array(
                             $location . '_integration',
                             '=',
@@ -306,10 +298,10 @@ class QuadMenu_Options {
                         'type' => 'select',
                         'id' => $location . '_theme',
                         'title' => __('Theme', 'quadmenu'),
-                        'subtitle' => __('Select a theme for this theme location', 'redux-framework-demo'),
+                        'subtitle' => __('Select a theme for this theme location', 'quadmenu'),
                         'class' => 'current_theme',
                         'options' => (array) $GLOBALS['quadmenu_themes'],
-                        'default' => $this->locations_defaults[$location . '_theme'],
+                        'default' => $this->defaults[$location . '_theme'],
                     ),
                     array(
                         'customizer' => false,
@@ -352,7 +344,7 @@ class QuadMenu_Options {
 
     function responsive($sections) {
 
-        $defaults = apply_filters('quadmenu_default_options', array());
+        $this->defaults = apply_filters('quadmenu_default_options', array());
 
         $sections[] = array(
             'customizer' => false,
@@ -371,7 +363,7 @@ class QuadMenu_Options {
                     'min' => '0',
                     'step' => '2',
                     'max' => '60',
-                    'default' => (int) $defaults['gutter'],
+                    'default' => (int) $this->defaults['gutter'],
                     'validate' => 'numeric'
                 ),
                 array(
@@ -383,7 +375,7 @@ class QuadMenu_Options {
                     'min' => '480',
                     'step' => '1',
                     'max' => '1000',
-                    'default' => (int) $defaults['screen_sm_width'],
+                    'default' => (int) $this->defaults['screen_sm_width'],
                     'validate' => 'numeric'
                 ),
                 array(
@@ -395,7 +387,7 @@ class QuadMenu_Options {
                     'min' => '481',
                     'step' => '1',
                     'max' => '1200',
-                    'default' => (int) $defaults['screen_md_width'],
+                    'default' => (int) $this->defaults['screen_md_width'],
                     'validate' => 'numeric'
                 ),
                 array(
@@ -407,7 +399,7 @@ class QuadMenu_Options {
                     'min' => '801',
                     'step' => '1',
                     'max' => '1600',
-                    'default' => (int) $defaults['screen_lg_width'],
+                    'default' => (int) $this->defaults['screen_lg_width'],
                     'validate' => 'numeric'
                 ),
             )
@@ -428,9 +420,11 @@ class QuadMenu_Options {
 
             foreach ($current_theme_defaults as $key => $value) {
 
-                $this->themes_defaults["{$theme}_{$key}"] = $value;
+                $this->defaults["{$theme}_{$key}"] = $value;
             }
         }
+
+        $this->defaults = apply_filters('quadmenu_default_options', $this->defaults);
 
         foreach ($quadmenu_themes as $key => $theme) {
 
@@ -484,7 +478,7 @@ class QuadMenu_Options {
                                 'img' => QUADMENU_URL_ASSETS . 'backend/images/layouts/inherit.png'
                             ),
                         ),
-                        'default' => $this->validate($this->themes_defaults[$key . '_layout'], array('embed', 'collapse', 'offcanvas', 'vertical', 'inherit')),
+                        'default' => $this->validate($this->defaults[$key . '_layout'], array('embed', 'collapse', 'offcanvas', 'vertical', 'inherit')),
                     ),
                     array(
                         'customizer' => true,
@@ -506,7 +500,7 @@ class QuadMenu_Options {
                         'required' => array(
                             array($key . '_layout', '=', array('offcanvas', 'vertical')),
                         ),
-                        'default' => $this->validate($this->themes_defaults[$key . '_layout_offcanvas_float'], array('left', 'right')),
+                        'default' => $this->validate($this->defaults[$key . '_layout_offcanvas_float'], array('left', 'right')),
                     ),
                     array(
                         'customizer' => true,
@@ -532,7 +526,7 @@ class QuadMenu_Options {
                         'required' => array(
                             array($key . '_layout', '=', array('embed', 'collapse', 'offcanvas')),
                         ),
-                        'default' => $this->validate($this->themes_defaults[$key . '_layout_align'], array('left', 'right')),
+                        'default' => $this->validate($this->defaults[$key . '_layout_align'], array('left', 'right')),
                     ),
                     // Behaviour
                     // ---------------------------------------------------------
@@ -557,7 +551,7 @@ class QuadMenu_Options {
                         'required' => array(
                             array($key . '_layout', '=', array('embed', 'collapse', 'offcanvas', 'vertical')),
                         ),
-                        'default' => (int) $this->themes_defaults[$key . '_layout_breakpoint'],
+                        'default' => (int) $this->defaults[$key . '_layout_breakpoint'],
                     ),
                     array(
                         'customizer' => true,
@@ -569,7 +563,7 @@ class QuadMenu_Options {
                         'required' => array(
                             array($key . '_layout', '=', array('collapse', 'offcanvas')),
                         ),
-                        'default' => (int) $this->themes_defaults[$key . '_layout_width'],
+                        'default' => (int) $this->defaults[$key . '_layout_width'],
                     ),
                     array(
                         'customizer' => true,
@@ -581,7 +575,7 @@ class QuadMenu_Options {
                         'required' => array(
                             array($key . '_layout', '=', array('collapse', 'offcanvas')),
                         ),
-                        'default' => (int) $this->themes_defaults[$key . '_layout_width_inner'],
+                        'default' => (int) $this->defaults[$key . '_layout_width_inner'],
                     ),
                     array(
                         'customizer' => true,
@@ -590,7 +584,7 @@ class QuadMenu_Options {
                         'type' => 'text',
                         'title' => esc_html__('Selector', 'quadmenu'),
                         'subtitle' => esc_html__('The menu container will take the width of this selector.', 'quadmenu'),
-                        'default' => $this->themes_defaults[$key . '_layout_width_inner_selector'],
+                        'default' => $this->defaults[$key . '_layout_width_inner_selector'],
                         'required' => array(
                             array($key . '_layout', '=', array('collapse', 'offcanvas')),
                         ),
@@ -606,7 +600,7 @@ class QuadMenu_Options {
                         'title' => esc_html__('Open', 'quadmenu'),
                         'subtitle' => esc_html__('Open dropdown if is current page.', 'quadmenu'),
                         'compiler' => false,
-                        'default' => (bool) $this->themes_defaults[$key . '_layout_current'],
+                        'default' => (bool) $this->defaults[$key . '_layout_current'],
                     ),
                     array(
                         'customizer' => true,
@@ -622,7 +616,7 @@ class QuadMenu_Options {
                         'required' => array(
                             array($key . '_layout', '=', array('embed', 'collapse', 'offcanvas')),
                         ),
-                        'default' => $this->validate($this->themes_defaults[$key . '_layout_divider'], array('show', 'hide')),
+                        'default' => $this->validate($this->defaults[$key . '_layout_divider'], array('show', 'hide')),
                     ),
                     array(
                         'customizer' => true,
@@ -638,7 +632,7 @@ class QuadMenu_Options {
                         'required' => array(
                             array($key . '_layout', '=', array('embed', 'collapse', 'offcanvas')),
                         ),
-                        'default' => $this->validate($this->themes_defaults[$key . '_layout_caret'], array('show', 'hide')),
+                        'default' => $this->validate($this->defaults[$key . '_layout_caret'], array('show', 'hide')),
                     ),
                     array(
                         'customizer' => true,
@@ -656,7 +650,7 @@ class QuadMenu_Options {
                         'required' => array(
                             array($key . '_layout', '=', array('collapse', 'offcanvas')),
                         ),
-                        'default' => $this->themes_defaults[$key . '_layout_hover_effect'],
+                        'default' => $this->defaults[$key . '_layout_hover_effect'],
                     ),
                     array(
                         'customizer' => false,
@@ -664,47 +658,8 @@ class QuadMenu_Options {
                         'type' => 'text',
                         'title' => esc_html__('Classes', 'quadmenu'),
                         'subtitle' => esc_html__('Include your own classes in the menu.', 'quadmenu'),
-                        'default' => $this->themes_defaults[$key . '_layout_classes'],
+                        'default' => $this->defaults[$key . '_layout_classes'],
                         'validate' => 'no_special_chars',
-                    ),
-                    // Sticky
-                    // ---------------------------------------------------------
-                    array(
-                        'customizer' => true,
-                        'transport' => 'postMessage',
-                        'id' => $key . '_layout_sticky_divider',
-                        'type' => 'section',
-                        'title' => esc_html__('Sticky', 'quadmenu'),
-                        'indent' => true,
-                        'required' => array(
-                            array($key . '_layout', '=', array('collapse', 'offcanvas')),
-                        ),
-                    ),
-                    array(
-                        'customizer' => true,
-                        'transport' => 'selective',
-                        'id' => $key . '_layout_sticky',
-                        'type' => 'switch',
-                        'title' => esc_html__('Sticky', 'quadmenu'),
-                        'subtitle' => esc_html__('Make the menu sticky on scroll.', 'quadmenu'),
-                        'default' => (int) $this->themes_defaults[$key . '_layout_sticky'],
-                    ),
-                    array(
-                        'customizer' => true,
-                        'transport' => 'selective',
-                        'id' => $key . '_layout_sticky_offset',
-                        'type' => 'slider',
-                        'title' => esc_html__('Offset', 'quadmenu'),
-                        'subtitle' => esc_html__('Set the length of the scroll for each user to pass before the menu will stick to the top of the window.', 'quadmenu'),
-                        'min' => '0',
-                        'step' => '1',
-                        'max' => '340',
-                        'required' => array(
-                            $key . '_layout_sticky',
-                            '=',
-                            1
-                        ),
-                        'default' => (int) $this->themes_defaults[$key . '_layout_sticky_offset'],
                     ),
                     // Dropdown
                     // ---------------------------------------------------------
@@ -725,7 +680,7 @@ class QuadMenu_Options {
                             'click' => esc_html__('Click', 'quadmenu')
                         ),
                         'subtitle' => esc_html__('Open dropdown menu on mouseover or click.', 'quadmenu'),
-                        'default' => $this->validate($this->themes_defaults[$key . '_layout_trigger'], array('hoverintent', 'click')),
+                        'default' => $this->validate($this->defaults[$key . '_layout_trigger'], array('hoverintent', 'click')),
                         'required' => array(
                             array($key . '_layout', '=', array('embed', 'collapse', 'offcanvas')),
                         ),
@@ -738,7 +693,7 @@ class QuadMenu_Options {
                         'title' => esc_html__('Max Height', 'quadmenu'),
                         'subtitle' => esc_html__('Set the max height of dropdowns.', 'quadmenu'),
                         'compiler' => false,
-                        'default' => (bool) $this->themes_defaults[$key . '_layout_dropdown_maxheight'],
+                        'default' => (bool) $this->defaults[$key . '_layout_dropdown_maxheight'],
                         'required' => array(
                             array($key . '_layout', '=', array('embed', 'collapse', 'offcanvas')),
                         ),
@@ -757,7 +712,7 @@ class QuadMenu_Options {
                         )),
                         'title' => esc_html__('Animation', 'quadmenu'),
                         'subtitle' => esc_html__('Select the animation for the dropdowns.', 'quadmenu'),
-                        'default' => $this->themes_defaults[$key . '_layout_animation'],
+                        'default' => $this->defaults[$key . '_layout_animation'],
                         'validate' => 'no_special_chars',
                         'required' => array(
                             array($key . '_layout', '=', array('embed', 'collapse', 'offcanvas')),
@@ -787,7 +742,7 @@ class QuadMenu_Options {
                             'color' => esc_html__('Color', 'quadmenu'),
                             'gradient' => esc_html__('Gradient', 'quadmenu'),
                         ),
-                        'default' => $this->validate($this->themes_defaults[$key . '_navbar_background'], array('color', 'gradient'))
+                        'default' => $this->validate($this->defaults[$key . '_navbar_background'], array('color', 'gradient'))
                     ),
                     array(
                         'compiler' => true,
@@ -802,7 +757,7 @@ class QuadMenu_Options {
                         'options' => array(
                             'allow_empty' => false,
                         ),
-                        'default' => $this->themes_defaults[$key . '_navbar_background_color']
+                        'default' => $this->defaults[$key . '_navbar_background_color']
                     ),
                     array(
                         'compiler' => true,
@@ -822,7 +777,7 @@ class QuadMenu_Options {
                         'options' => array(
                             'allow_empty' => false,
                         ),
-                        'default' => $this->themes_defaults[$key . '_navbar_background_to']
+                        'default' => $this->defaults[$key . '_navbar_background_to']
                     ),
                     array(
                         'compiler' => true,
@@ -841,7 +796,7 @@ class QuadMenu_Options {
                             '=',
                             'gradient'
                         ),
-                        'default' => (int) $this->themes_defaults[$key . '_navbar_background_deg']
+                        'default' => (int) $this->defaults[$key . '_navbar_background_deg']
                     ),
                     array(
                         'compiler' => true,
@@ -856,7 +811,7 @@ class QuadMenu_Options {
                         'options' => array(
                             'allow_empty' => false,
                         ),
-                        'default' => $this->themes_defaults[$key . '_navbar_divider']
+                        'default' => $this->defaults[$key . '_navbar_divider']
                     ),
                     array(
                         'compiler' => true,
@@ -868,7 +823,7 @@ class QuadMenu_Options {
                         'type' => 'color',
                         'transparent' => false,
                         'validate' => 'not_empty',
-                        'default' => $this->themes_defaults[$key . '_navbar_text']
+                        'default' => $this->defaults[$key . '_navbar_text']
                     ),
                     // Navbar
                     // ---------------------------------------------------------
@@ -891,7 +846,7 @@ class QuadMenu_Options {
                         'min' => '30',
                         'step' => '2',
                         'max' => '160',
-                        'default' => (int) $this->themes_defaults[$key . '_navbar_height'],
+                        'default' => (int) $this->defaults[$key . '_navbar_height'],
                         'validate' => 'numeric',
                     ),
                     array(
@@ -903,7 +858,7 @@ class QuadMenu_Options {
                         'min' => '60',
                         'step' => '1',
                         'max' => '500',
-                        'default' => (int) $this->themes_defaults[$key . '_navbar_width'],
+                        'default' => (int) $this->defaults[$key . '_navbar_width'],
                         'validate' => 'numeric',
                     ),
                     // Logo
@@ -926,7 +881,7 @@ class QuadMenu_Options {
                         'type' => 'media',
                         'title' => esc_html__('Logo', 'quadmenu'),
                         'subtitle' => esc_html__('Upload the navbar logo.', 'quadmenu'),
-                        'default' => $this->themes_defaults[$key . '_navbar_logo'],
+                        'default' => $this->defaults[$key . '_navbar_logo'],
                         'required' => array(
                             array($key . '_layout', '=', array('collapse', 'offcanvas', 'vertical', 'inherit')),
                         ),
@@ -942,7 +897,7 @@ class QuadMenu_Options {
                         'min' => '20',
                         'step' => '1',
                         'max' => '160',
-                        'default' => (int) $this->themes_defaults[$key . '_navbar_logo_height'],
+                        'default' => (int) $this->defaults[$key . '_navbar_logo_height'],
                         'validate' => 'numeric',
                         'required' => array(
                             array($key . '_layout', '=', array('collapse', 'offcanvas', 'vertical', 'inherit')),
@@ -961,7 +916,7 @@ class QuadMenu_Options {
                         'options' => array(
                             'allow_empty' => false,
                         ),
-                        'default' => $this->themes_defaults[$key . '_navbar_logo_bg'],
+                        'default' => $this->defaults[$key . '_navbar_logo_bg'],
                         'required' => array(
                             array($key . '_layout', '=', array('collapse', 'offcanvas', 'vertical', 'inherit')),
                         ),
@@ -987,7 +942,7 @@ class QuadMenu_Options {
                         'all' => false,
                         'style' => false,
                         'color' => false,
-                        'default' => $this->themes_defaults[$key . '_navbar_link_margin']
+                        'default' => $this->defaults[$key . '_navbar_link_margin']
                     ),
                     array(
                         'compiler' => true,
@@ -1000,7 +955,7 @@ class QuadMenu_Options {
                         'all' => false,
                         'style' => false,
                         'color' => false,
-                        'default' => $this->themes_defaults[$key . '_navbar_link_radius']
+                        'default' => $this->defaults[$key . '_navbar_link_radius']
                     ),
                     // Link
                     // ---------------------------------------------------------
@@ -1023,7 +978,7 @@ class QuadMenu_Options {
                         'transparent' => false,
                         //'validate' => 'color',                    
                         'validate' => 'not_empty',
-                        'default' => $this->themes_defaults[$key . '_navbar_link']
+                        'default' => $this->defaults[$key . '_navbar_link']
                     ),
                     array(
                         'compiler' => true,
@@ -1038,7 +993,7 @@ class QuadMenu_Options {
                         'options' => array(
                             'allow_empty' => false,
                         ),
-                        'default' => $this->themes_defaults[$key . '_navbar_link_bg']
+                        'default' => $this->defaults[$key . '_navbar_link_bg']
                     ),
                     array(
                         'compiler' => true,
@@ -1051,7 +1006,7 @@ class QuadMenu_Options {
                         'transparent' => false,
                         //'validate' => 'color',                    
                         'validate' => 'not_empty',
-                        'default' => $this->themes_defaults[$key . '_navbar_link_hover']
+                        'default' => $this->defaults[$key . '_navbar_link_hover']
                     ),
                     array(
                         'compiler' => true,
@@ -1066,7 +1021,7 @@ class QuadMenu_Options {
                         'options' => array(
                             'allow_empty' => false,
                         ),
-                        'default' => $this->themes_defaults[$key . '_navbar_link_bg_hover']
+                        'default' => $this->defaults[$key . '_navbar_link_bg_hover']
                     ),
                     array(
                         'compiler' => true,
@@ -1079,23 +1034,7 @@ class QuadMenu_Options {
                         'options' => array(
                             'allow_empty' => false,
                         ),
-                        'default' => $this->themes_defaults[$key . '_navbar_link_hover_effect']
-                    ),
-                    array(
-                        'compiler' => true,
-                        'customizer' => true,
-                        'transport' => 'postMessage',
-                        'title' => esc_html__('Link', 'quadmenu'),
-                        'subtitle' => esc_html__('Pick a text transform for the link.', 'quadmenu'),
-                        'id' => $key . '_navbar_link_transform',
-                        'type' => 'select',
-                        'options' => array(
-                            'none' => esc_html__('None', 'quadmenu'),
-                            'capitalize' => esc_html__('Capitalize', 'quadmenu'),
-                            'uppercase' => esc_html__('Uppercase', 'quadmenu'),
-                            'lowercase' => esc_html__('Lowercase', 'quadmenu'),
-                        ),
-                        'default' => $this->themes_defaults[$key . '_navbar_link_transform']
+                        'default' => $this->defaults[$key . '_navbar_link_hover_effect']
                     ),
                     // Button
                     /* ---------------------------------------------------------
@@ -1114,7 +1053,7 @@ class QuadMenu_Options {
                       //'validate' => 'color',
                       'validate' => 'not_empty',
                       'compiler' => true,
-                      'default' => $this->themes_defaults[$key . '_navbar_button']
+                      'default' => $this->defaults[$key . '_navbar_button']
                       ),
                       array(
                       'title' => esc_html__('Background', 'quadmenu'),
@@ -1125,7 +1064,7 @@ class QuadMenu_Options {
                       //'validate' => 'color',
                       'validate' => 'not_empty',
                       'compiler' => true,
-                      'default' => $this->themes_defaults[$key . '_navbar_button_bg']
+                      'default' => $this->defaults[$key . '_navbar_button_bg']
                       ),
                       array(
                       'title' => esc_html__('Hover', 'quadmenu'),
@@ -1136,7 +1075,7 @@ class QuadMenu_Options {
                       //'validate' => 'color',
                       'validate' => 'not_empty',
                       'compiler' => true,
-                      'default' => $this->themes_defaults[$key . '_navbar_button_hover']
+                      'default' => $this->defaults[$key . '_navbar_button_hover']
                       ),
                       array(
                       'title' => esc_html__('Background', 'quadmenu'),
@@ -1147,7 +1086,7 @@ class QuadMenu_Options {
                       //'validate' => 'color',
                       'validate' => 'not_empty',
                       'compiler' => true,
-                      'default' => $this->themes_defaults[$key . '_navbar_button_bg_hover']
+                      'default' => $this->defaults[$key . '_navbar_button_bg_hover']
                       ), */
                     // Icon
                     // ---------------------------------------------------------
@@ -1170,7 +1109,7 @@ class QuadMenu_Options {
                         'transparent' => false,
                         //'validate' => 'color',                    
                         'validate' => 'not_empty',
-                        'default' => $this->themes_defaults[$key . '_navbar_link_icon']
+                        'default' => $this->defaults[$key . '_navbar_link_icon']
                     ),
                     array(
                         'compiler' => true,
@@ -1183,7 +1122,7 @@ class QuadMenu_Options {
                         'transparent' => false,
                         //'validate' => 'color',                    
                         'validate' => 'not_empty',
-                        'default' => $this->themes_defaults[$key . '_navbar_link_icon_hover']
+                        'default' => $this->defaults[$key . '_navbar_link_icon_hover']
                     ),
                     // Subtitle
                     // ---------------------------------------------------------
@@ -1206,7 +1145,7 @@ class QuadMenu_Options {
                         'transparent' => false,
                         //'validate' => 'color',                    
                         'validate' => 'not_empty',
-                        'default' => $this->themes_defaults[$key . '_navbar_link_subtitle']
+                        'default' => $this->defaults[$key . '_navbar_link_subtitle']
                     ),
                     array(
                         'compiler' => true,
@@ -1219,7 +1158,7 @@ class QuadMenu_Options {
                         'transparent' => false,
                         //'validate' => 'color',                    
                         'validate' => 'not_empty',
-                        'default' => $this->themes_defaults[$key . '_navbar_link_subtitle_hover']
+                        'default' => $this->defaults[$key . '_navbar_link_subtitle_hover']
                     ),
                     // Badge
                     // ---------------------------------------------------------
@@ -1242,7 +1181,7 @@ class QuadMenu_Options {
                         'transparent' => false,
                         //'validate' => 'color',                    
                         'validate' => 'not_empty',
-                        'default' => $this->themes_defaults[$key . '_navbar_badge_color']
+                        'default' => $this->defaults[$key . '_navbar_badge_color']
                     ),
                     array(
                         'compiler' => true,
@@ -1255,7 +1194,7 @@ class QuadMenu_Options {
                         'transparent' => false,
                         //'validate' => 'color',                    
                         'validate' => 'not_empty',
-                        'default' => $this->themes_defaults[$key . '_navbar_badge']
+                        'default' => $this->defaults[$key . '_navbar_badge']
                     ),
                     // Scrollbar
                     // ---------------------------------------------------------                    
@@ -1280,7 +1219,7 @@ class QuadMenu_Options {
                         'type' => 'rgba',
                         'transparent' => false,
                         'validate' => 'colorrgba',
-                        'default' => $this->themes_defaults[$key . '_navbar_scrollbar']
+                        'default' => $this->defaults[$key . '_navbar_scrollbar']
                     ),
                     array(
                         'compiler' => true,
@@ -1291,10 +1230,92 @@ class QuadMenu_Options {
                         'type' => 'rgba',
                         'transparent' => false,
                         'validate' => 'colorrgba',
-                        'default' => $this->themes_defaults[$key . '_navbar_scrollbar_rail']
+                        'default' => $this->defaults[$key . '_navbar_scrollbar_rail']
                     ),
                 )
             );
+
+            $sections[] = array(
+                //'customizer' => true,
+                'subsection' => true,
+                'heading' => false,
+                'icon' => 'dashicons dashicons-sticky',
+                'id' => 'quadmenu_sticky_' . $key,
+                'title' => esc_html__('Sticky', 'quadmenu'),
+                'permissions' => 'edit_theme_options',
+                'fields' => array(
+                    // Sticky
+                    // ---------------------------------------------------------
+                    array(
+                        'customizer' => true,
+                        'transport' => 'selective',
+                        'id' => $key . '_layout_sticky',
+                        'type' => 'switch',
+                        'title' => esc_html__('Sticky', 'quadmenu'),
+                        'subtitle' => esc_html__('Make the menu sticky on scroll.', 'quadmenu'),
+                        'default' => (int) $this->defaults[$key . '_layout_sticky'],
+                    ),
+                    array(
+                        'customizer' => true,
+                        'transport' => 'selective',
+                        'id' => $key . '_layout_sticky_offset',
+                        'type' => 'slider',
+                        'title' => esc_html__('Offset', 'quadmenu'),
+                        'subtitle' => esc_html__('Set the length of the scroll for each user to pass before the menu will stick to the top of the window.', 'quadmenu'),
+                        'min' => '0',
+                        'step' => '1',
+                        'max' => '340',
+                        'required' => array(
+                            $key . '_layout_sticky',
+                            '=',
+                            1
+                        ),
+                        'default' => (int) $this->defaults[$key . '_layout_sticky_offset'],
+                    ),
+                    array(
+                        'compiler' => true,
+                        'customizer' => true,
+                        'transport' => 'postMessage',
+                        'id' => $key . '_sticky_background',
+                        'title' => esc_html__('Background', 'quadmenu'),
+                        'subtitle' => esc_html__('Change the navbar sticky background.', 'quadmenu'),
+                        'type' => 'rgba',
+                        'validate' => 'colorrgba',
+                        'options' => array(
+                            'allow_empty' => false,
+                        ),
+                        'transparent' => false,
+                        'default' => $this->defaults[$key . '_sticky_background']
+                    ),
+                    array(
+                        'compiler' => true,
+                        'customizer' => true,
+                        'transport' => 'postMessage',
+                        'id' => $key . '_sticky_height',
+                        'type' => 'slider',
+                        'title' => esc_html__('Height', 'quadmenu'),
+                        'subtitle' => esc_html__('Change the navbar sticky height.', 'quadmenu'),
+                        'min' => '30',
+                        'step' => '2',
+                        'max' => '160',
+                        'default' => $this->defaults[$key . '_sticky_height'],
+                    ),
+                    array(
+                        'compiler' => true,
+                        'customizer' => true,
+                        'transport' => 'postMessage',
+                        'id' => $key . '_sticky_logo_height',
+                        'type' => 'slider',
+                        'title' => esc_html__('Logo', 'quadmenu'),
+                        'subtitle' => esc_html__('Max logo height in px.', 'quadmenu'),
+                        'min' => '20',
+                        'step' => '1',
+                        'max' => '160',
+                        'default' => $this->defaults[$key . '_sticky_logo_height'],
+                    ),
+                )
+            );
+
 
             $sections[] = array(
                 //'customizer' => true,
@@ -1324,7 +1345,7 @@ class QuadMenu_Options {
                             'show' => esc_html__('Show', 'quadmenu'),
                             'hide' => esc_html__('Hide', 'quadmenu')
                         ),
-                        'default' => $this->validate($this->themes_defaults[$key . '_mobile_shadow'], array('show', 'hide')),
+                        'default' => $this->validate($this->defaults[$key . '_mobile_shadow'], array('show', 'hide')),
                     ),
                     array(
                         'compiler' => true,
@@ -1334,7 +1355,7 @@ class QuadMenu_Options {
                         'type' => 'rgba',
                         'transparent' => false,
                         'validate' => 'colorrgba',
-                        'default' => $this->themes_defaults[$key . '_navbar_mobile_border']
+                        'default' => $this->defaults[$key . '_navbar_mobile_border']
                     ),
                     // Toggle
                     // ---------------------------------------------------------
@@ -1356,7 +1377,7 @@ class QuadMenu_Options {
                         'type' => 'color',
                         'transparent' => false,
                         'validate' => 'not_empty',
-                        'default' => $this->themes_defaults[$key . '_navbar_toggle_open']
+                        'default' => $this->defaults[$key . '_navbar_toggle_open']
                     ),
                     array(
                         'compiler' => true,
@@ -1368,70 +1389,28 @@ class QuadMenu_Options {
                         'type' => 'color',
                         'transparent' => false,
                         'validate' => 'not_empty',
-                        'default' => $this->themes_defaults[$key . '_navbar_toggle_close']
+                        'default' => $this->defaults[$key . '_navbar_toggle_close']
                     ),
-                )
-            );
-
-            $sections[] = array(
-                //'customizer' => true,
-                'subsection' => true,
-                'heading' => false,
-                'icon' => 'dashicons dashicons-sticky',
-                'id' => 'quadmenu_sticky_' . $key,
-                'title' => esc_html__('Sticky', 'quadmenu'),
-                'permissions' => 'edit_theme_options',
-                'fields' => array(
-                    // Sticky
-                    // ---------------------------------------------------------
-                    /* array(
-                      'customizer' => true,
-                      'transport' => 'postMessage',
-                      'id' => $key . '_sticky',
-                      'type' => 'section',
-                      'title' => esc_html__('Sticky', 'quadmenu'),
-                      'indent' => true
-                      ), */
                     array(
-                        'compiler' => true,
                         'customizer' => true,
                         'transport' => 'postMessage',
-                        'id' => $key . '_sticky_background',
-                        'title' => esc_html__('Background', 'quadmenu'),
-                        'subtitle' => esc_html__('Change the navbar sticky background.', 'quadmenu'),
-                        'type' => 'rgba',
-                        'validate' => 'colorrgba',
-                        'options' => array(
-                            'allow_empty' => false,
-                        ),
-                        'transparent' => false,
-                        'default' => $this->themes_defaults[$key . '_sticky_background']
+                        'id' => $key . '_mobile_link',
+                        'type' => 'section',
+                        'title' => esc_html__('Link', 'quadmenu'),
+                        'indent' => false
                     ),
                     array(
                         'compiler' => true,
-                        'customizer' => true,
+                        'customizer' => false,
                         'transport' => 'postMessage',
-                        'id' => $key . '_sticky_height',
-                        'type' => 'slider',
-                        'title' => esc_html__('Height', 'quadmenu'),
-                        'subtitle' => esc_html__('Change the navbar sticky height.', 'quadmenu'),
-                        'min' => '30',
-                        'step' => '2',
-                        'max' => '160',
-                        'default' => $this->themes_defaults[$key . '_sticky_height'],
-                    ),
-                    array(
-                        'compiler' => true,
-                        'customizer' => true,
-                        'transport' => 'postMessage',
-                        'id' => $key . '_sticky_logo_height',
-                        'type' => 'slider',
-                        'title' => esc_html__('Logo', 'quadmenu'),
-                        'subtitle' => esc_html__('Max logo height in px.', 'quadmenu'),
-                        'min' => '20',
-                        'step' => '1',
-                        'max' => '160',
-                        'default' => $this->themes_defaults[$key . '_sticky_logo_height'],
+                        'title' => esc_html__('Margin', 'quadmenu'),
+                        'subtitle' => esc_html__('Set the margin for the mobile links.', 'quadmenu'),
+                        'id' => $key . '_mobile_link_padding',
+                        'type' => 'border',
+                        'all' => false,
+                        'style' => false,
+                        'color' => false,
+                        'default' => $this->defaults[$key . '_mobile_link_padding']
                     ),
                 )
             );
@@ -1457,7 +1436,7 @@ class QuadMenu_Options {
                             'show' => esc_html__('Show', 'quadmenu'),
                             'hide' => esc_html__('Hide', 'quadmenu')
                         ),
-                        'default' => $this->validate($this->themes_defaults[$key . '_dropdown_shadow'], array('show', 'hide')),
+                        'default' => $this->validate($this->defaults[$key . '_dropdown_shadow'], array('show', 'hide')),
                     ),
                     array(
                         'compiler' => true,
@@ -1470,7 +1449,7 @@ class QuadMenu_Options {
                         'min' => '0',
                         'step' => '1',
                         'max' => '45',
-                        'default' => (int) $this->themes_defaults[$key . '_dropdown_margin'],
+                        'default' => (int) $this->defaults[$key . '_dropdown_margin'],
                     ),
                     array(
                         'compiler' => true,
@@ -1483,7 +1462,7 @@ class QuadMenu_Options {
                         'all' => false,
                         'style' => false,
                         'color' => false,
-                        'default' => $this->validate_border($this->themes_defaults[$key . '_dropdown_radius'])
+                        'default' => $this->validate_border($this->defaults[$key . '_dropdown_radius'])
                     ),
                     array(
                         'compiler' => true,
@@ -1495,7 +1474,7 @@ class QuadMenu_Options {
                         'type' => 'border',
                         'all' => false,
                         'style' => false,
-                        'default' => $this->validate_border($this->themes_defaults[$key . '_dropdown_border'])
+                        'default' => $this->validate_border($this->defaults[$key . '_dropdown_border'])
                     ),
                     array(
                         'compiler' => true,
@@ -1510,40 +1489,7 @@ class QuadMenu_Options {
                         'options' => array(
                             'allow_empty' => false,
                         ),
-                        'default' => $this->themes_defaults[$key . '_dropdown_background']
-                    ),
-                    // Title
-                    // ---------------------------------------------------------
-                    array(
-                        'customizer' => true,
-                        'transport' => 'postMessage',
-                        'id' => $key . '_title',
-                        'type' => 'section',
-                        'title' => esc_html__('Title', 'quadmenu'),
-                        'indent' => true
-                    ),
-                    array(
-                        'compiler' => true,
-                        'customizer' => true,
-                        'transport' => 'postMessage',
-                        'title' => esc_html__('Title', 'quadmenu'),
-                        'subtitle' => esc_html__('Pick a color for the dropdown menu title.', 'quadmenu'),
-                        'id' => $key . '_dropdown_title',
-                        'type' => 'color',
-                        'transparent' => false,
-                        //'validate' => 'color',                    
-                        'validate' => 'not_empty',
-                        'default' => $this->themes_defaults[$key . '_dropdown_title']
-                    ),
-                    array(
-                        'compiler' => true,
-                        'customizer' => true,
-                        'transport' => 'postMessage',
-                        'title' => esc_html__('Border', 'quadmenu'),
-                        'subtitle' => esc_html__('Pick a color for the dropdown menu title border.', 'quadmenu'),
-                        'id' => $key . '_dropdown_title_border',
-                        'type' => 'border',
-                        'default' => $this->themes_defaults[$key . '_dropdown_title_border']
+                        'default' => $this->defaults[$key . '_dropdown_background']
                     ),
                     // Link
                     // ---------------------------------------------------------
@@ -1566,7 +1512,7 @@ class QuadMenu_Options {
                         'transparent' => false,
                         //'validate' => 'color',                    
                         'validate' => 'not_empty',
-                        'default' => $this->themes_defaults[$key . '_dropdown_link']
+                        'default' => $this->defaults[$key . '_dropdown_link']
                     ),
                     array(
                         'compiler' => true,
@@ -1579,7 +1525,7 @@ class QuadMenu_Options {
                         'transparent' => false,
                         //'validate' => 'color',                    
                         'validate' => 'not_empty',
-                        'default' => $this->themes_defaults[$key . '_dropdown_link_hover']
+                        'default' => $this->defaults[$key . '_dropdown_link_hover']
                     ),
                     array(
                         'compiler' => true,
@@ -1594,8 +1540,21 @@ class QuadMenu_Options {
                         'options' => array(
                             'allow_empty' => false,
                         ),
-                        'default' => $this->themes_defaults[$key . '_dropdown_link_bg_hover']
+                        'default' => $this->defaults[$key . '_dropdown_link_bg_hover']
                     ),
+                    /* array(
+                      'compiler' => true,
+                      'customizer' => false,
+                      'transport' => 'postMessage',
+                      'title' => esc_html__('Margin', 'quadmenu'),
+                      'subtitle' => esc_html__('Set the margin for the navbar links.', 'quadmenu'),
+                      'id' => $key . '_dropdown_link_padding',
+                      'type' => 'border',
+                      'all' => false,
+                      'style' => false,
+                      'color' => false,
+                      'default' => $this->defaults[$key . '_dropdown_link_padding']
+                      ), */
                     array(
                         'compiler' => true,
                         'customizer' => true,
@@ -1604,23 +1563,40 @@ class QuadMenu_Options {
                         'subtitle' => esc_html__('Pick a border color for the dropdown menu links border.', 'quadmenu'),
                         'id' => $key . '_dropdown_link_border',
                         'type' => 'border',
-                        'default' => $this->themes_defaults[$key . '_dropdown_link_border']
+                        'default' => $this->defaults[$key . '_dropdown_link_border']
+                    ),
+                    // Title
+                    // ---------------------------------------------------------
+                    array(
+                        'customizer' => true,
+                        'transport' => 'postMessage',
+                        'id' => $key . '_title',
+                        'type' => 'section',
+                        'title' => esc_html__('Title', 'quadmenu'),
+                        'indent' => true
                     ),
                     array(
                         'compiler' => true,
                         'customizer' => true,
                         'transport' => 'postMessage',
-                        'title' => esc_html__('Transform', 'quadmenu'),
-                        'subtitle' => esc_html__('Pick a text transform for the link.', 'quadmenu'),
-                        'id' => $key . '_dropdown_link_transform',
-                        'type' => 'select',
-                        'options' => array(
-                            'none' => esc_html__('None', 'quadmenu'),
-                            'capitalize' => esc_html__('Capitalize', 'quadmenu'),
-                            'uppercase' => esc_html__('Uppercase', 'quadmenu'),
-                            'lowercase' => esc_html__('Lowercase', 'quadmenu'),
-                        ),
-                        'default' => $this->themes_defaults[$key . '_dropdown_link_transform']
+                        'title' => esc_html__('Title', 'quadmenu'),
+                        'subtitle' => esc_html__('Pick a color for the dropdown menu title.', 'quadmenu'),
+                        'id' => $key . '_dropdown_title',
+                        'type' => 'color',
+                        'transparent' => false,
+                        //'validate' => 'color',                    
+                        'validate' => 'not_empty',
+                        'default' => $this->defaults[$key . '_dropdown_title']
+                    ),
+                    array(
+                        'compiler' => true,
+                        'customizer' => true,
+                        'transport' => 'postMessage',
+                        'title' => esc_html__('Border', 'quadmenu'),
+                        'subtitle' => esc_html__('Pick a color for the dropdown menu title border.', 'quadmenu'),
+                        'id' => $key . '_dropdown_title_border',
+                        'type' => 'border',
+                        'default' => $this->defaults[$key . '_dropdown_title_border']
                     ),
                     // Icon
                     // ---------------------------------------------------------
@@ -1643,7 +1619,7 @@ class QuadMenu_Options {
                         'transparent' => false,
                         //'validate' => 'color',                    
                         'validate' => 'not_empty',
-                        'default' => $this->themes_defaults[$key . '_dropdown_link_icon']
+                        'default' => $this->defaults[$key . '_dropdown_link_icon']
                     ),
                     array(
                         'compiler' => true,
@@ -1656,7 +1632,7 @@ class QuadMenu_Options {
                         'transparent' => false,
                         //'validate' => 'color',                    
                         'validate' => 'not_empty',
-                        'default' => $this->themes_defaults[$key . '_dropdown_link_icon_hover']
+                        'default' => $this->defaults[$key . '_dropdown_link_icon_hover']
                     ),
                     // Subtitle
                     // ---------------------------------------------------------
@@ -1679,7 +1655,7 @@ class QuadMenu_Options {
                         'transparent' => false,
                         //'validate' => 'color',                    
                         'validate' => 'not_empty',
-                        'default' => $this->themes_defaults[$key . '_dropdown_link_subtitle']
+                        'default' => $this->defaults[$key . '_dropdown_link_subtitle']
                     ),
                     array(
                         'compiler' => true,
@@ -1692,7 +1668,7 @@ class QuadMenu_Options {
                         'transparent' => false,
                         //'validate' => 'color',                    
                         'validate' => 'not_empty',
-                        'default' => $this->themes_defaults[$key . '_dropdown_link_subtitle_hover']
+                        'default' => $this->defaults[$key . '_dropdown_link_subtitle_hover']
                     ),
                     // Button
                     // ---------------------------------------------------------
@@ -1715,7 +1691,7 @@ class QuadMenu_Options {
                         'transparent' => false,
                         //'validate' => 'color',                    
                         'validate' => 'not_empty',
-                        'default' => $this->themes_defaults[$key . '_dropdown_button']
+                        'default' => $this->defaults[$key . '_dropdown_button']
                     ),
                     array(
                         'compiler' => true,
@@ -1728,7 +1704,7 @@ class QuadMenu_Options {
                         'transparent' => false,
                         //'validate' => 'color',                    
                         'validate' => 'not_empty',
-                        'default' => $this->themes_defaults[$key . '_dropdown_button_bg']
+                        'default' => $this->defaults[$key . '_dropdown_button_bg']
                     ),
                     array(
                         'compiler' => true,
@@ -1741,7 +1717,7 @@ class QuadMenu_Options {
                         'transparent' => false,
                         //'validate' => 'color',                    
                         'validate' => 'not_empty',
-                        'default' => $this->themes_defaults[$key . '_dropdown_button_hover']
+                        'default' => $this->defaults[$key . '_dropdown_button_hover']
                     ),
                     array(
                         'compiler' => true,
@@ -1754,7 +1730,7 @@ class QuadMenu_Options {
                         'transparent' => false,
                         //'validate' => 'color',                    
                         'validate' => 'not_empty',
-                        'default' => $this->themes_defaults[$key . '_dropdown_button_bg_hover']
+                        'default' => $this->defaults[$key . '_dropdown_button_bg_hover']
                     ),
                     array(
                         'compiler' => true,
@@ -1767,7 +1743,7 @@ class QuadMenu_Options {
                         'all' => false,
                         'style' => false,
                         'color' => false,
-                        'default' => $this->validate_border($this->themes_defaults[$key . '_dropdown_button_radius'])
+                        'default' => $this->validate_border($this->defaults[$key . '_dropdown_button_radius'])
                     ),
                     // Tab
                     // ---------------------------------------------------------
@@ -1790,7 +1766,7 @@ class QuadMenu_Options {
                         'transparent' => false,
                         'validate' => 'colorrgba',
                         'transparent' => false,
-                        'default' => $this->themes_defaults[$key . '_dropdown_tab_bg']
+                        'default' => $this->defaults[$key . '_dropdown_tab_bg']
                     ),
                     array(
                         'compiler' => true,
@@ -1803,7 +1779,7 @@ class QuadMenu_Options {
                         'transparent' => false,
                         'validate' => 'colorrgba',
                         'transparent' => false,
-                        'default' => $this->themes_defaults[$key . '_dropdown_tab_bg_hover']
+                        'default' => $this->defaults[$key . '_dropdown_tab_bg_hover']
                     ),
                     // Scrollbar
                     // ---------------------------------------------------------                    
@@ -1828,7 +1804,7 @@ class QuadMenu_Options {
                         'type' => 'rgba',
                         'transparent' => false,
                         'validate' => 'colorrgba',
-                        'default' => $this->themes_defaults[$key . '_dropdown_scrollbar']
+                        'default' => $this->defaults[$key . '_dropdown_scrollbar']
                     ),
                     array(
                         'compiler' => true,
@@ -1839,7 +1815,7 @@ class QuadMenu_Options {
                         'type' => 'rgba',
                         'transparent' => false,
                         'validate' => 'colorrgba',
-                        'default' => $this->themes_defaults[$key . '_dropdown_scrollbar_rail']
+                        'default' => $this->defaults[$key . '_dropdown_scrollbar_rail']
                     ),
                 ),
             );
@@ -1867,7 +1843,7 @@ class QuadMenu_Options {
                         'text-align' => false,
                         'color' => false,
                         'subsets' => true,
-                        'default' => $this->validate_font($this->themes_defaults[$key . '_font'])
+                        'default' => $this->validate_font($this->defaults[$key . '_font'])
                     ),
                     array(
                         'compiler' => true,
@@ -1884,7 +1860,23 @@ class QuadMenu_Options {
                         'text-align' => false,
                         'color' => false,
                         'subsets' => true,
-                        'default' => $this->validate_font($this->themes_defaults[$key . '_navbar_font'])
+                        'default' => $this->validate_font($this->defaults[$key . '_navbar_font'])
+                    ),
+                    array(
+                        'compiler' => true,
+                        'customizer' => true,
+                        'transport' => 'postMessage',
+                        'title' => esc_html__('Transform', 'quadmenu'),
+                        'subtitle' => esc_html__('Pick a text transform for the link.', 'quadmenu'),
+                        'id' => $key . '_navbar_link_transform',
+                        'type' => 'select',
+                        'options' => array(
+                            'none' => esc_html__('None', 'quadmenu'),
+                            'capitalize' => esc_html__('Capitalize', 'quadmenu'),
+                            'uppercase' => esc_html__('Uppercase', 'quadmenu'),
+                            'lowercase' => esc_html__('Lowercase', 'quadmenu'),
+                        ),
+                        'default' => $this->defaults[$key . '_navbar_link_transform']
                     ),
                     array(
                         'compiler' => true,
@@ -1901,7 +1893,23 @@ class QuadMenu_Options {
                         'text-align' => false,
                         'color' => false,
                         'subsets' => true,
-                        'default' => $this->validate_font($this->themes_defaults[$key . '_dropdown_font'])
+                        'default' => $this->validate_font($this->defaults[$key . '_dropdown_font'])
+                    ),
+                    array(
+                        'compiler' => true,
+                        'customizer' => true,
+                        'transport' => 'postMessage',
+                        'title' => esc_html__('Transform', 'quadmenu'),
+                        'subtitle' => esc_html__('Pick a text transform for the link.', 'quadmenu'),
+                        'id' => $key . '_dropdown_link_transform',
+                        'type' => 'select',
+                        'options' => array(
+                            'none' => esc_html__('None', 'quadmenu'),
+                            'capitalize' => esc_html__('Capitalize', 'quadmenu'),
+                            'uppercase' => esc_html__('Uppercase', 'quadmenu'),
+                            'lowercase' => esc_html__('Lowercase', 'quadmenu'),
+                        ),
+                        'default' => $this->defaults[$key . '_dropdown_link_transform']
                     ),
                 )
             );

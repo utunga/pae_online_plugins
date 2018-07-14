@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * Week view for [tribe_events] shortcode.
+ *
+ */
 if ( ! defined( 'ABSPATH' ) ) {
 	die( '-1' );
 }
@@ -24,7 +27,6 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events__Week {
 		$this->set_current_month();
 		$this->shortcode->prepare_default();
 
-
 		Tribe__Events__Pro__Main::instance()->enqueue_pro_scripts();
 		Tribe__Events__Pro__Template_Factory::asset_package( 'events-pro-css' );
 		Tribe__Events__Pro__Template_Factory::asset_package( 'ajax-weekview' );
@@ -34,21 +36,19 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events__Week {
 	}
 
 	protected function set_current_month() {
-		$default = date_i18n( 'Y-m-d' );
+		$default    = date_i18n( Tribe__Date_Utils::DBDATEFORMAT );
 		$this->date = $this->shortcode->get_url_param( 'eventDate' );
 
 		if ( empty( $this->date ) ) {
 			$this->date = $this->shortcode->get_attribute( 'date', $default );
 		}
 
-		// Expand "yyyy-mm" dates to "yyyy-mm-dd" format
-		if ( preg_match( '/^[0-9]{4}-[0-9]{2}$/', $this->date ) ) {
-			$this->date .= '-01';
-		}
-		// If we're not left with a "yyyy-mm-dd" date, override with the today's date
-		elseif ( ! preg_match( '/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $this->date ) ) {
+		// If we're not left with a "yyyy-mm-dd" or "yyyy-m-d" date, override with the today's date.
+		if ( ! preg_match( '/^[0-9]{4}-[0-9]{1,2}-[0-9]{1,2}$/', $this->date ) ) {
 			$this->date = $default;
 		}
+
+		$this->date = $this->format_date( $this->date );
 
 		$this->shortcode->update_query( array(
 			'eventDate' => $this->date,
@@ -58,7 +58,7 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events__Week {
 	/**
 	 * Filters the baseurl of ugly links
 	 *
-	 * @param string $url URL to filter
+	 * @param string $url URL to filter.
 	 *
 	 * @return string
 	 */
@@ -74,5 +74,23 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events__Week {
 	public function shortcode_post_render() {
 		remove_filter( 'tribe_events_force_ugly_link', '__return_true' );
 		remove_filter( 'tribe_events_ugly_link_baseurl', array( $this, 'filter_baseurl' ) );
+	}
+
+	/**
+	 * Return date with yyyy-mm-dd format.
+	 * (leading zeros and day if not included)
+	 *
+	 * @since 4.4.27
+	 *
+	 * @param string $date The date (shotcode attribute).
+	 *
+	 * @return string $date_formatted
+	 */
+	public function format_date( $date ) {
+
+		$date           = new DateTime( $date );
+		$date_formatted = $date->format( Tribe__Date_Utils::DBDATEFORMAT );
+
+		return $date_formatted;
 	}
 }

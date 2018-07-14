@@ -450,7 +450,17 @@ if ( Object.prototype.hasOwnProperty.call( window, 'tribe_ev' ) ) {
 				.filter( function ( item ) {
 					return item.length === 2;
 				} ).reduce( function ( obj, current ) {
-					obj[ current[ 0 ] ] = current[ 1 ];
+					// If the object key already exists
+					if ( obj[ current[ 0 ] ] ) {
+						// Add multi value fields to an array
+						if( ! obj[ current[ 0 ] ].push ) {
+							obj[ current[ 0 ] ] = [ obj[ current[ 0 ] ] ];
+						}
+						obj[ current[ 0 ] ].push( current[ 1 ] );
+					} else {
+						// Else, assign obj.key = value
+						obj[ current[ 0 ] ] = current[ 1 ];
+					}
 					return obj;
 				}, {} );
 		}
@@ -463,7 +473,7 @@ if ( Object.prototype.hasOwnProperty.call( window, 'tribe_ev' ) ) {
 		var isRecurrence = $tribe_container.data( 'recurrence-list' ) === 1;
 		$( te ).on( 'tribe_ev_ajaxStart', function () {
 			if ( typeof ts.params === 'string' ) {
-				ts.params = deserialize( ts.params );
+				ts.params = deserialize( decodeURI( ts.params ) );
 			}
 			ts.params.is_recurrence_list = isRecurrence;
 			var value = $tribe_container.data( 'tribe_post_parent' );

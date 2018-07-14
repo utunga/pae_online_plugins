@@ -39,7 +39,7 @@ class QuadMenu_Admin {
 
     function add_action_links($links) {
 
-        $links[] = '<a target="_blank" href="' . QUADMENU_PREMIUM . '">' . esc_html__('Premium', 'quadmenu') . '</a>';
+        $links[] = '<a target="_blank" href="' . QUADMENU_DEMO . '">' . esc_html__('Premium', 'quadmenu') . '</a>';
 
         $links[] = '<a href="' . admin_url('admin.php?page=' . QUADMENU_PANEL) . '">' . esc_html__('Settings', 'quadmenu') . '</a>';
 
@@ -62,14 +62,17 @@ class QuadMenu_Admin {
         if ($pagenow != 'nav-menus.php')
             return;
 
-        if (count($quadmenu_locations) < 1)
+        if (!is_array($quadmenu_locations))
+            return;
+
+        if (!count($quadmenu_locations))
             return;
         ?>
         <script>
             jQuery(document).ready(function () {
                 var $list = jQuery('.menu-theme-locations'),
                         locations = <?php echo json_encode(array_keys($quadmenu_locations)); ?>,
-                        icon = '<img src="<?php echo esc_url(QUADMENU_URL_ASSETS . '/backend/images/q2.png'); ?>" style="width: 1em; height: auto; margin: 1px 0 -1px 0; "/>';
+                        icon = '<img src="<?php echo esc_url(QUADMENU_URL_ASSETS . '/backend/images/icon-dark-18x18.png'); ?>" style="width: 1em; height: auto; margin: 1px 0 -1px 0; "/>';
 
                 jQuery.each(locations, function (index, item) {
                     $list.find('input#locations-' + item).after(icon);

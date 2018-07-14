@@ -33,7 +33,7 @@ if ( ! class_exists( 'Tribe__Events__Pro__Countdown_Widget' ) ) {
 			$instance['complete'] = $new_instance['complete'] == '' ? $old_instance['complete'] : $new_instance['complete'];
 
 			$instance['event_ID'] = $instance['event'] = absint( $new_instance['event'] );
-			$instance['event_date'] = tribe_get_start_date( $instance['event_ID'], false, Tribe__Date_Utils::DBDATETIMEFORMAT,'event' );
+			$instance['event_date'] = tribe_get_start_date( $instance['event_ID'], false, Tribe__Date_Utils::DBDATETIMEFORMAT, 'event' );
 
 			if ( isset( $new_instance['jsonld_enable'] ) && $new_instance['jsonld_enable'] == true ) {
 				$instance['jsonld_enable'] = 1;
@@ -108,6 +108,19 @@ if ( ! class_exists( 'Tribe__Events__Pro__Countdown_Widget' ) ) {
 
 			$instance = wp_parse_args( (array) $instance, $defaults );
 			wp_enqueue_script( 'tribe-events-countdown-widget', tribe_events_pro_resource_url( 'widget-countdown.js' ), array( 'jquery' ), apply_filters( 'tribe_events_pro_js_version', Tribe__Events__Pro__Main::VERSION ), true );
+
+			/**
+			 * Do things pre-render like: optionally enqueue assets if we're not in a sidebar
+			 * This has to be done in widget() because we have to be able to access
+			 * the queried object for some plugins
+			 *
+			 * @since 4.4.29
+			 *
+			 * @param string __CLASS__ the widget class
+			 * @param array  $args     the widget args
+			 * @param array  $instance the widget instance
+			 */
+			do_action( 'tribe_events_pro_widget_render', __CLASS__, $args, $instance );
 
 			// Setup required variables
 			if ( empty( $instance['event'] ) ) {

@@ -25,7 +25,7 @@ class QuadMenu_Settings extends QuadMenu_Configuration {
 
             $delete_menu_items_id[] = array('id' => $menu_item_id);
 
-            if (count($delete_menu_items_id)) {
+            if (is_array($delete_menu_items_id) && count($delete_menu_items_id)) {
                 foreach ($delete_menu_items_id as $item) {
 
                     $id = absint($item['id']);
@@ -52,9 +52,7 @@ class QuadMenu_Settings extends QuadMenu_Configuration {
             return $childrens;
         }
 
-        $menu = wp_get_nav_menu_items($menu_id);
-
-        if (count($menu)) {
+        if (is_array($menu = wp_get_nav_menu_items($menu_id)) && count($menu)) {
 
             foreach ($menu as $item) {
 
@@ -87,7 +85,7 @@ class QuadMenu_Settings extends QuadMenu_Configuration {
 
         $class = 'menu-item-quadmenu-setting ' . $id;
 
-        $ops;
+        $ops = '';
 
         if (isset($setting['ops'])) {
             $ops = $setting['ops'];

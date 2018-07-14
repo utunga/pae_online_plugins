@@ -55,8 +55,13 @@
     max-width: 100%;
 }
 
-.tribe-customizer-select2 {
+.tribe-customizer-select2,
+.so-panels-dialog-wrapper ~ .select2-drop {
 	z-index: 100000000;
+}
+
+.so-content.panel-dialog.widget {
+	margin-bottom: 0;
 }
 
 .recurrence_end_count {

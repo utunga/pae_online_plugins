@@ -21,7 +21,10 @@ class Quadmenu_Locations {
 
         global $_wp_registered_nav_menus, $quadmenu_locations;
 
-        if (count($quadmenu_locations) == count($_wp_registered_nav_menus))
+        if (!is_array($_wp_registered_nav_menus))
+            return;
+
+        if ((count($quadmenu_locations) == count($_wp_registered_nav_menus)))
             return;
 
         update_option('_wp_registered_nav_menus', $_wp_registered_nav_menus);
@@ -36,7 +39,7 @@ class Quadmenu_Locations {
 
         global $_wp_registered_nav_menus;
 
-        if (count($_wp_registered_nav_menus) > 0)
+        if (is_array($_wp_registered_nav_menus) && count($_wp_registered_nav_menus))
             return;
 
         $_wp_registered_nav_menus = array_filter((array) get_option('_wp_registered_nav_menus'));
@@ -48,7 +51,10 @@ class Quadmenu_Locations {
 
         $quadmenu_locations = array();
 
-        if (count($_wp_registered_nav_menus) < 1)
+        if (!is_array($_wp_registered_nav_menus))
+            return;
+
+        if (!count($_wp_registered_nav_menus))
             return;
 
         foreach ($_wp_registered_nav_menus as $location => $name) {
@@ -59,7 +65,7 @@ class Quadmenu_Locations {
             if (empty($quadmenu[$location . '_integration']))
                 continue;
 
-            $quadmenu_locations[$location] = '';
+            $quadmenu_locations[$location] = $name;
 
             if (empty($quadmenu[$location . '_theme']))
                 continue;

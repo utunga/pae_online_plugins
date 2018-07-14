@@ -663,7 +663,9 @@
 						$( "div[id*='tribe-events-event-']" ).hide().fadeIn( 'fast' );
 
 						ts.page_title = $( '#tribe-events-header' ).data( 'title' );
+						ts.view_title = $( '#tribe-events-header' ).data( 'viewtitle' );
 						document.title = ts.page_title;
+						$( '.tribe-events-page-title' ).html( ts.view_title );
 
 						// we only want to add query args for Shortcodes and ugly URL sites
 						if (
@@ -689,7 +691,7 @@
 							history.pushState( {
 								"tribe_url_params": ts.url_params,
 								"tribe_params"    : ts.params
-							}, ts.page_title, td.cur_url );
+							}, ts.page_title, td.cur_url + '?' + ts.url_params );
 						}
 
 						/**
@@ -714,6 +716,13 @@
 				}
 			}
 		}
+
+		// Prevent double-tap to open link to single event
+		$( '.tribe-week-event a.url' ).on( 'click touchend', function( e ) {
+			var el   = $( this );
+			var link = el.attr( 'href' );
+			window.location = link;
+		} );
 
 		// @ifdef DEBUG
 		dbug && debug.info( 'TEC Debug: tribe-events-week.js successfully loaded' );

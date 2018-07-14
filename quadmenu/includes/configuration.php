@@ -102,7 +102,7 @@ class QuadMenu_Configuration {
                 'cart' => array(
                     'title' => esc_html__('Cart', 'quadmenu'),
                     'icon' => 'dashicons dashicons-cart',
-                    'settings' => array('dropdown', 'title', 'cart'),
+                    'settings' => array('dropdown', 'title', 'cart', 'cart_text'),
                 ),
             ),
             'desc' => esc_html__('A cart widget for Woocommerce.', 'quadmenu'),
@@ -166,7 +166,7 @@ class QuadMenu_Configuration {
                     'settings' => array('icon'),
                 ),
             ),
-            'parent' => array('main', 'column', 'custom', 'post_type', 'post_type_archive', 'taxonomy'),
+            'parent' => array('main', 'column', 'custom', 'login', 'post_type', 'post_type_archive', 'taxonomy'),
         );
         $items['taxonomy'] = array(
             'panels' => array(
@@ -181,7 +181,7 @@ class QuadMenu_Configuration {
                     'settings' => array('icon'),
                 ),
             ),
-            'parent' => array('main', 'column', 'custom', 'post_type', 'post_type_archive', 'taxonomy'),
+            'parent' => array('main', 'column', 'custom', 'login', 'post_type', 'post_type_archive', 'taxonomy'),
         );
         $items['post_type'] = array(
             'panels' => array(
@@ -201,7 +201,7 @@ class QuadMenu_Configuration {
                     'settings' => array('thumb', 'excerpt'),
                 ),
             ),
-            'parent' => array('main', 'column', 'custom', 'post_type', 'post_type_archive', 'taxonomy'),
+            'parent' => array('main', 'column', 'custom', 'login', 'post_type', 'post_type_archive', 'taxonomy'),
         );
 
         $items['post_type_archive'] = array(
@@ -222,7 +222,7 @@ class QuadMenu_Configuration {
                     'settings' => array('icon'),
                 ),
             ),
-            'parent' => array('main', 'column', 'custom', 'post_type', 'post_type_archive', 'taxonomy'),
+            'parent' => array('main', 'column', 'custom', 'login', 'post_type', 'post_type_archive', 'taxonomy'),
         );
 
         return json_decode(json_encode(apply_filters('quadmenu_custom_nav_menu_items', $items)));
@@ -478,6 +478,14 @@ class QuadMenu_Configuration {
             )
         );
 
+        $settings['cart_text'] = array(
+            'id' => 'quadmenu-settings[cart_text]',
+            'db' => 'cart_text',
+            'title' => esc_html__('Text', 'quadmenu'),
+            'type' => 'textarea',
+            'default' => '',
+        );
+
         $settings['social'] = array(
             'id' => 'quadmenu-settings[social]',
             'db' => 'social',
@@ -646,7 +654,7 @@ class QuadMenu_Configuration {
         $defaults['layout_offcanvas_float'] = 'right';
         $defaults['layout_align'] = 'right';
         $defaults['layout_sticky'] = 0;
-        $defaults['layout_sticky_offset'] = '90';
+        $defaults['layout_sticky_offset'] = 0;
         $defaults['layout_divider'] = 'hide';
         $defaults['layout_caret'] = 'show';
         $defaults['layout_trigger'] = 'hoverintent';
@@ -734,7 +742,7 @@ class QuadMenu_Configuration {
         $defaults['navbar_badge'] = '#fb88dd';
         $defaults['navbar_badge_color'] = '#ffffff';
         $defaults['sticky_height'] = '60';
-        $defaults['sticky_background'] = 'rgba(0,0,0,0.5)';
+        $defaults['sticky_background'] = 'rgba(0,0,0,0.95)';
         $defaults['sticky_logo_height'] = '25';
         $defaults['navbar_scrollbar'] = '#fb88dd';
         $defaults['navbar_scrollbar_rail'] = '#ffffff';
@@ -743,6 +751,7 @@ class QuadMenu_Configuration {
         // ---------------------------------------------------------------------
 
         $defaults['mobile_shadow'] = 'show';
+        $defaults['mobile_link_padding'] = array('border-top' => '15', 'border-right' => '30', 'border-left' => '30', 'border-bottom' => '15');
 
         // Dropdown
         // ---------------------------------------------------------------------
@@ -775,6 +784,7 @@ class QuadMenu_Configuration {
         $defaults['dropdown_link_icon_hover'] = '#a9a9a9';
         $defaults['dropdown_link_subtitle'] = '#a0a0a0';
         $defaults['dropdown_link_subtitle_hover'] = '#cccccc';
+        //$defaults['dropdown_link_padding'] = array('border-top' => '15', 'border-right' => '15', 'border-left' => '15', 'border-bottom' => '15');
         $defaults['dropdown_button'] = '#ffffff';
         $defaults['dropdown_button_bg'] = '#fb88dd';
         $defaults['dropdown_button_hover'] = '#ffffff';

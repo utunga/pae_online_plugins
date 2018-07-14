@@ -435,8 +435,9 @@ tribe_events_pro_admin.recurrence = {
 
 		$rule.find( '.tribe-datepicker' ).datepicker( tribe_datepicker_opts );
 		$rule.insertBefore( this.$exclusion_staging );
+		this.set_recurrence_end_min_date();
 
-		this.set_recurrence_data_attributes($rule);
+		this.set_recurrence_data_attributes( $rule );
 		this.maybe_relocate_end_date( $rule );
 		this.adjust_rule_helper_text( $rule );
 		this.update_rule_recurrence_text( $rule );
@@ -741,7 +742,13 @@ tribe_events_pro_admin.recurrence = {
 	 */
 	my.convert_date_format_php_to_moment = function( format ) {
 		// this format conversion is pretty fragile, but the best we can do at the moment
-		return format.replace( 'j', 'D' ).replace( 'F', 'MMMM' ).replace( 'Y', 'YYYY' ).replace( 'm', 'MM' ).replace( 'd', 'DD' );
+		return format
+			.replace( 'S', 'o' )
+			.replace( 'j', 'D' )
+			.replace( 'F', 'MMMM' )
+			.replace( 'Y', 'YYYY' )
+			.replace( 'm', 'MM' )
+			.replace( 'd', 'DD' );
 	};
 
 	my.update_rule_recurrence_text = function( $rule ) {
@@ -877,9 +884,10 @@ tribe_events_pro_admin.recurrence = {
 		} else if ( 'date' === type ) {
 			var single_date = $rule.find( 'input.tribe-datepicker' ).val();
 
-			// If the date for this rule has not yet been set, default to the event's start date
+			// If the date for this rule has not yet been set, clean the description
 			if ( ! single_date ) {
-				single_date = start_date;
+				$rule.find( '.tribe-event-recurrence-description' ).html( '' );
+				return;
 			}
 
 			var single_moment = moment( single_date, date_format );
@@ -973,6 +981,15 @@ tribe_events_pro_admin.recurrence = {
 		var end_count = parseInt( $rule.find( '.recurrence_end_count' ).val(), 10 );
 		var type_text = $el.data( 'plural' );
 
+		// clean the input from other characters and set the int value
+		$rule.find( '.recurrence_end_count' ).val( end_count );
+
+		// prevent the end_count to be empty or a non positive int
+		if ( isNaN( end_count ) || ( 0 >= end_count ) ) {
+			$rule.find( '.recurrence_end_count' ).val( 1 );
+			end_count = 1;
+		}
+
 		if ( 1 === end_count ) {
 			type_text = $el.data( 'single' );
 		}
@@ -1021,7 +1038,7 @@ tribe_events_pro_admin.recurrence = {
 	 */
 	my.event.recurrence_end_count_changed = function() {
 		var $el = $( this );
-		var $rule = $el.closest( '.tribe-event-recurrence' );
+		var $rule = $el.closest( '.tribe-event-recurrence, .tribe-event-exclusion' );
 
 		$rule.find( '[data-field="type"]' ).change();
 	};

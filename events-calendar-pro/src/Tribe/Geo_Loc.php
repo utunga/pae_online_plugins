@@ -1212,7 +1212,7 @@ class Tribe__Events__Pro__Geo_Loc {
 	 */
 	public function generate_geopoints_for_all_venues() {
 
-		set_time_limit( 5 * 60 );
+		tribe_set_time_limit( 5 * 60 );
 
 		$venues = $this->get_venues_without_geoloc_info( true );
 

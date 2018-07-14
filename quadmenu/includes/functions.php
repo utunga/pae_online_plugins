@@ -28,14 +28,14 @@ if (!function_exists('quadmenu_get_menu_theme')) {
             return $theme;
         }
 
-        /*if ($menu_id) {
+        /* if ($menu_id) {
 
-            $theme = get_term_meta($menu_id, QUADMENU_THEME_DB_KEY, true);
+          $theme = get_term_meta($menu_id, QUADMENU_THEME_DB_KEY, true);
 
-            if ($theme && isset($quadmenu_themes[$theme])) {
-                return $theme;
-            }
-        }*/
+          if ($theme && isset($quadmenu_themes[$theme])) {
+          return $theme;
+          }
+          } */
 
         if (is_array($quadmenu_themes)) {
             return current(array_keys($quadmenu_themes));
@@ -49,34 +49,16 @@ if (!function_exists('quadmenu_get_menu_theme')) {
 // Developers
 // -----------------------------------------------------------------------------
 
-if (!function_exists('_quadmenu_compiler_integration')) {
+if (!function_exists('quadmenu_compiler_enqueue')) {
 
-    function _quadmenu_compiler_integration() {
-        return QuadMenu_Compiler::instance()->enqueue();
-    }
+    function quadmenu_compiler_enqueue() {
 
-}
+        $screen = get_current_screen();
 
-if (!function_exists('_quadmenu_do_compiler')) {
+        if (isset($screen->base) && !strpos($screen->base, QUADMENU_PANEL) === false)
+            return;
 
-    function _quadmenu_do_compiler() {
-        return QuadMenu_Compiler::instance()->do_compiler();
-    }
-
-}
-
-if (!function_exists('_quadmenu_compiler_variables')) {
-
-    function _quadmenu_compiler_variables() {
-        return QuadMenu_Compiler::instance()->redux_compiler();
-    }
-
-}
-
-if (!function_exists('quadmenu_do_compiler')) {
-
-    function quadmenu_do_compiler() {
-        add_action('init', '_quadmenu_do_compiler', 26);
+        QuadMenu_Compiler::instance()->enqueue();
     }
 
 }
@@ -84,7 +66,23 @@ if (!function_exists('quadmenu_do_compiler')) {
 if (!function_exists('quadmenu_compiler_integration')) {
 
     function quadmenu_compiler_integration() {
-        add_action('init', '_quadmenu_compiler_integration', 26);
+        add_action('admin_init', 'quadmenu_compiler_enqueue', 26);
+    }
+
+}
+
+if (!function_exists('quadmenu_do_compiler')) {
+
+    function quadmenu_do_compiler() {
+        QuadMenu_Compiler::instance()->do_compiler(true);
+    }
+
+}
+
+if (!function_exists('quadmenu_compiler_variables')) {
+
+    function quadmenu_compiler_variables() {
+        return QuadMenu_Compiler::instance()->redux_compiler();
     }
 
 }

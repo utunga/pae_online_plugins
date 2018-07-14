@@ -32,6 +32,19 @@ class Tribe__Events__Pro__Mini_Calendar_Widget extends WP_Widget {
 		);
 		$instance = wp_parse_args( (array) $instance, $defaults );
 
+		/**
+		 * Do things pre-render like: optionally enqueue assets if we're not in a sidebar
+		 * This has to be done in widget() because we have to be able to access
+		 * the queried object for some plugins
+		 *
+		 * @since 4.4.29
+		 *
+		 * @param string __CLASS__ the widget class
+		 * @param array  $args     the widget args
+		 * @param array  $instance the widget instance
+		 */
+		do_action( 'tribe_events_pro_widget_render', __CLASS__, $args, $instance );
+
 		$filters   = isset( $instance['raw_filters'] ) ? $instance['raw_filters'] : json_decode( $instance['filters'] );
 		$tax_query = Tribe__Events__Pro__Widgets::form_tax_query( $filters, $instance['operand'] );
 

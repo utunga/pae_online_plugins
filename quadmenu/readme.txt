@@ -3,14 +3,14 @@ Contributors: quadlayers
 Tags: quadmenu, menu, megamenu, mega menu, responsive menu, mobile menu, wordpress mega menu, horizontal menu, vertical menu, navigation, widget, dropdown menu, drag and drop, mobile, responsive, retina, theme editor, shortcode, sidebar, icons, dashicons
 Requires at least: 4.8
 Tested up to: 4.9.5
-Stable tag: 1.3.6
+Stable tag: 1.4.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 The first responsive mega menu designed for theme developers. 
 
 == Description ==
-[Demo](http://quadmenu.com/) | [Premium](https://codecanyon.net/item/quadmenu-responsive-wordpress-mega-menu/21315450?ref=QuadLayers) | [Documentation](http://quadmenu.com/documentation/) | [Developers](http://quadmenu.com/documentation/developers/)
+[Premium](http://quadmenu.com/) | [Demo](http://quadmenu.com/demo/) | [Documentation](http://quadmenu.com/documentation/) | [Developers](http://quadmenu.com/documentation/developers/)
 
 QuadMenu is a WordPress Mega Menu that will allows you easily integrate the menu in your theme's project. This plugin allows you to create mega menus, tabs menus and carrousel menus in a simple and native way converting your existing menu into a powerful tool. 
 
@@ -98,6 +98,49 @@ QuadMenu has been designed by developers for developers. For them, we have inclu
 [http://www.quadmenu.com/documentation/installation/](http://www.quadmenu.com/documentation/installation/)
 
 == Changelog ==
+
+= 1.4.3 =
+
+* Fixed. post type hidden badges
+* Fixed. post type archives loop
+* Fixed. instance missing on license update
+
+= 1.4.2 =
+
+* Fixed. post type archive and categories in first level menu
+* Fixed. compatibility issues with microsoft edge
+* Fixed. compatibility issues with total theme
+* Fixed. tab menu style issues with extra
+* Fixed. license undefined object
+* Improvement. license manager system
+* Improvement. woocommerce cart improvements
+
+= 1.4.1 =
+
+* Fixed. display block in dropdown menu link
+* Fixed. hide account links from login item when user is logged out
+
+= 1.4.0 =
+
+* Fixed. menu locations
+* Fixed. cart and login menu hoverintent
+* Fixed. remove woocommerce from cart event
+* Fixed. fixed widgets removed issue
+* New. option account menu for logoin item
+* New. option cart item bottom text
+* New. option mobile layout padding
+* Improvement. new sticky navbar
+* Improvement. new logoin style
+* Improvement. new cart style
+
+= 1.3.9 =
+
+* Fixed. issue with hoverintent
+
+= 1.3.8 =
+
+* Improvement. PHP 7.2.x compatibility
+* Improvement. new archive types metabox
 
 = 1.3.7 =
 

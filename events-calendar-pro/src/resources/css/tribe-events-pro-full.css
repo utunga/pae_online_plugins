@@ -412,8 +412,9 @@
 
 /* Specific Classes */
 
-.tribe-week-today {
-	background-color: #f9f9f9;
+.tribe-events-grid .tribe-grid-header .tribe-week-today {
+	background-color: #666;
+	color: #fff;
 }
 
 /* Week view grid background */
@@ -693,7 +694,7 @@
 	display: none;
 }
 
-.tribe-events-list #tribe-events-photo-events .tribe-events-event-details h2 {
+.tribe-events-list #tribe-events-photo-events .tribe-events-event-details .tribe-events-list-event-title {
 	font-size: 1.2em;
 	line-height: 1.2;
 	margin-bottom: 10px;
@@ -775,8 +776,7 @@
 
 /* tribe geo location option links (displayed when multiple locations found) */
 
-#tribe-geo-results h2,
-#tribe-geo-options h2 {
+#tribe-geo-results .tribe-events-map-event-title, #tribe-geo-options .tribe-events-map-event-title {
 	color: #222;
 	font-size: 18px;
 	font-weight: bold;
@@ -1048,7 +1048,7 @@ ul.related-events li {
 	text-transform: uppercase;
 }
 
-h3.tribe-events-related-events-title {
+.tribe-events-related-events-title {
 	font-size: 1.4em;
 	margin-bottom: 2%;
 }
@@ -1367,11 +1367,11 @@ div.tribe-countdown-text {
 	display: block;
 }
 
-.tribe-theme-twentyfifteen #tribe-events-content.tribe-events-photo #tribe-events-photo-events h2 {
+.tribe-theme-twentyfifteen #tribe-events-content.tribe-events-photo #tribe-events-photo-events .tribe-events-list-event-title {
 	line-height: 1.2;
 }
 
-.tribe-theme-twentyfifteen #tribe-events-content.tribe-events-photo #tribe-events-photo-events h2 a {
+.tribe-theme-twentyfifteen #tribe-events-content.tribe-events-photo #tribe-events-photo-events .tribe-events-list-event-title a {
 	border: 0;
 	text-decoration: none;
 }

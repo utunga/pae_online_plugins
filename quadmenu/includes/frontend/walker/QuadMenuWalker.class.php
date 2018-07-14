@@ -32,7 +32,7 @@ class QuadMenuWalker extends Walker_Nav_Menu {
 
         $umitem_obect_class = apply_filters('quadmenu_item_object_class', 'QuadMenuItemDefault', $element, $id, $this->auto_child);
 
-        $umitem = new $umitem_obect_class($output, $element, $depth, $cb_args[3], $id, $this, $has_children); //The $args that get passed to start_el are $cb[3] -- i.e. the 4the element in the array merged above
+        $umitem = new $umitem_obect_class($output, $element, $depth, $cb_args[3], $id, $this, $has_children, $children_elements); //The $args that get passed to start_el are $cb[3] -- i.e. the 4the element in the array merged above
 
         $this->push_item($umitem);
 

@@ -4,7 +4,7 @@
  * Plugin Name: QuadMenu
  * Plugin URI:  http://www.quadmenu.com
  * Description: The best drag & drop WordPress Mega Menu plugin which allow you to create Tabs Menus & Carousel Menus.
- * Version:     1.3.7
+ * Version:     1.4.3
  * Author:      Mega Menu
  * Author URI:  http://www.quadmenu.com
  * License:     GPL-2.0+
@@ -64,7 +64,6 @@ if (!class_exists('QuadMenu')) :
 
         function updates() {
             if (is_file(QUADMENU_PATH . 'premium/updates/license.php')) {
-                require_once QUADMENU_PATH . 'premium/updates/updater.php';
                 require_once QUADMENU_PATH . 'premium/updates/license.php';
             }
         }
@@ -87,7 +86,6 @@ if (!class_exists('QuadMenu')) :
             add_filter('quadmenu_setup_nav_menu_item', array($this, 'setup_nav_menu_item_parents'), 5);
             add_filter('quadmenu_setup_nav_menu_item', array($this, 'setup_nav_menu_item_validation'), 10);
 
-            add_action('init', array($this, 'wp_post_types'));
             add_action('init', array($this, 'register_sidebar'));
             add_action('init', array($this, 'register_icons'), -35);
             add_action('init', array($this, 'admin'), -25);
@@ -97,20 +95,6 @@ if (!class_exists('QuadMenu')) :
             add_action('admin_init', array($this, 'navmenu'));
 
             add_action('plugins_loaded', array($this, 'i18n'));
-        }
-
-        function wp_post_types() {
-
-            global $wp_post_types;
-
-            if (isset($wp_post_types['post'])) {
-                $wp_post_types['post']->has_archive = true;
-                $wp_post_types['post']->labels->archives = esc_html__('All Posts', 'quadmenu');
-            }
-
-            if (isset($wp_post_types['product'])) {
-                $wp_post_types['product']->has_archive = true;
-            }
         }
 
         public function register_sidebar() {
@@ -150,8 +134,12 @@ if (!class_exists('QuadMenu')) :
 
             global $quadmenu;
 
+            if (empty($quadmenu['styles_icons'])) {
+                return $this->registered_icons()->dashicons;
+            }
+
             if (empty($this->registered_icons()->{$quadmenu['styles_icons']})) {
-                return false;
+                return $this->registered_icons()->dashicons;
             }
 
             return $this->registered_icons()->{$quadmenu['styles_icons']};
@@ -172,7 +160,7 @@ if (!class_exists('QuadMenu')) :
 
             define('QUADMENU_NAME', 'QuadMenu');
 
-            define('QUADMENU_VERSION', '1.3.7');
+            define('QUADMENU_VERSION', '1.4.3');
 
             define('QUADMENU_OPTIONS', "quadmenu_{$this->theme()}");
 
@@ -214,7 +202,7 @@ if (!class_exists('QuadMenu')) :
 
             define('QUADMENU_VIDEOS', 'https://www.youtube.com/channel/UC4K_eP-dbttJUAC9ToMiKUQ');
 
-            define('QUADMENU_PREMIUM', 'http://quadmenu.com/?utm_source=quadmenu_admin');
+            define('QUADMENU_PURCHASE', 'http://quadmenu.com/#pricing?utm_source=quadmenu_admin');
         }
 
         private function includes() {
@@ -472,11 +460,11 @@ if (!class_exists('QuadMenu')) :
 
             if (isset($item->target) && $item->target === 'on') {
                 $item->target = '_blank';
-            } 
-            
+            }
+
             if (isset($item->target) && $item->target === 'off') {
                 $item->target = '';
-            } 
+            }
 
             if (isset($item->columns)) {
                 $item->columns = array_diff(array_filter($item->columns), array('off'));
@@ -499,7 +487,7 @@ if (!class_exists('QuadMenu')) :
                         }
 
                         // Remove valid quadmenu items
-                        if (is_admin() && !$item->_invalid && in_array(sanitize_key($item->quadmenu_menu_item_parent), apply_filters('quadmenu_remove_nav_menu_item', array('column', 'mega')))) {
+                        if (is_admin() && !$item->_invalid && in_array(sanitize_key($item->quadmenu_menu_item_parent), apply_filters('quadmenu_remove_nav_menu_item', array('column', 'mega', 'login')))) {
                             unset($items[$key]);
                         }
 

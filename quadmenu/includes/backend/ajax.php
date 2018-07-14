@@ -32,6 +32,8 @@ class QuadMenu_Ajax extends QuadMenu_Settings {
         // -----------------------------------------------------------------
 
         add_meta_box('quadmenu_nav_menu_items', esc_html__('QuadMenu Items', 'quadmenu'), array($this, 'nav_items'), 'nav-menus', 'side', 'high');
+
+        add_meta_box('quadmenu_nav_menu_archives', esc_html__('QuadMenu Archives', 'quadmenu'), array($this, 'nav_archives'), 'nav-menus', 'side', 'high');
     }
 
     public function enqueue() {
@@ -65,7 +67,7 @@ class QuadMenu_Ajax extends QuadMenu_Settings {
             <div id="tabs-panel-quadmenu-custom" class="tabs-panel tabs-panel-active">
                 <ul id ="quadmenu-custom-checklist" class="categorychecklist form-no-clear">
                     <?php
-                    if (count($items)):
+                    if (is_object($items)):
 
                         foreach ($items as $id => $item):
 
@@ -117,6 +119,55 @@ class QuadMenu_Ajax extends QuadMenu_Settings {
             </p>
         </div>
         <?php
+    }
+
+    public function nav_archives() {
+
+        $post_types = get_post_types(array('show_in_nav_menus' => true), 'object');
+
+        if ($post_types) :
+            $items = array();
+            $loop_index = 999999;
+
+            foreach ($post_types as $post_type) {
+                $item = new stdClass();
+                $loop_index++;
+                
+                $item->object_id = $loop_index;
+                $item->db_id = 0;
+                $item->object = $post_type->name;
+                $item->menu_item_parent = 0;
+                $item->type = 'post_type_archive';
+                $item->title = sprintf(esc_html__('All %s', 'quadmenu'), str_replace('All ', '', $post_type->labels->name));
+                $item->url = get_post_type_archive_link($post_type->query_var);
+                $item->target = '';
+                $item->attr_title = '';
+                $item->classes = array();
+                $item->xfn = '';
+
+                $items[] = $item;
+            }
+
+            $walker = new Walker_Nav_Menu_Checklist(array());
+            ?>
+
+            <div id="posttype-archive" class="posttypediv">
+                <div id="tabs-panel-posttype-archive" class="tabs-panel tabs-panel-active">
+                    <ul id="posttype-archive-checklist" class="categorychecklist form-no-clear">
+                        <?php echo walk_nav_menu_tree(array_map('wp_setup_nav_menu_item', $items), 0, (object) array('walker' => $walker)); ?>
+                    </ul>
+                </div>
+            </div>
+
+            <p class="button-controls">
+                <span class="add-to-menu">
+                    <input type="submit"<?php disabled(1, 0); ?> class="button-secondary submit-add-to-menu right" value="<?php esc_html_e('Add to Menu'); ?>" name="add-posttype-archive-menu-item" id="submit-posttype-archive" />
+                    <span class="spinner"></span>
+                </span>
+            </p>
+
+            <?php
+        endif;
     }
 
     /* public function ajax_change_nav_menu_theme() {
@@ -434,7 +485,7 @@ class QuadMenu_Ajax extends QuadMenu_Settings {
                 $post = array(
                     'ID' => $menu_item_id,
                 );
-                
+
                 if (isset($_REQUEST['menu-item-title'])) {
                     $post['post_title'] = apply_filters('the_title', $_REQUEST['menu-item-title']);
                 }
@@ -444,7 +495,7 @@ class QuadMenu_Ajax extends QuadMenu_Settings {
                 if (isset($_REQUEST['menu-item-description'])) {
                     $post['post_content'] = wp_kses_post($_REQUEST['menu-item-description']);
                 }
-                
+
                 //'post_type' => 'nav_menu_item',
                 //'post_parent' => $original_parent,
                 //'menu_order' => $args['menu-item-position'],

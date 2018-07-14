@@ -1704,7 +1704,7 @@
 
     // Redux
     // -------------------------------------------------------------------------
-    $(document).on('ready', function (e) {
+    $(window).on('load', function (e) {
 
         if ($('#last_tab').val() !== '') {
             $('ul.redux-group-menu > li.' + $('#last_tab').val() + ' > a').click();

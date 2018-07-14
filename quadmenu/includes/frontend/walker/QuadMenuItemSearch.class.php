@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('ABSPATH')) {
     die('-1');
 }
@@ -7,6 +6,7 @@ if (!defined('ABSPATH')) {
 class QuadMenuItemSearch extends QuadMenuItem {
 
     protected $type = 'search';
+    var $instance = 0;
 
     function init() {
         $this->item->url = '';
@@ -49,13 +49,15 @@ class QuadMenuItemSearch extends QuadMenuItem {
 
     function form() {
 
+        $this->instance = rand();
+
         ob_start();
         ?>
 
-        <form role="search" method="get" id="searchform" action="<?php echo esc_url(home_url('/')); ?>">
+        <form role="search" method="get" id="searchform_<?php echo esc_attr($this->instance); ?>" action="<?php echo esc_url(home_url('/')); ?>">
             <span class="quadmenu-item-content">
                 <?php echo $this->get_icon(); ?>
-                <input type="text" id="s" name="s" value="<?php echo esc_attr(get_search_query()); ?>" placeholder="<?php echo esc_html__('Search', 'quadmenu'); ?>" />
+                <input type="text" id="s_<?php echo esc_attr($this->instance); ?>" name="s" value="<?php echo esc_attr(get_search_query()); ?>" placeholder="<?php echo esc_html__('Search', 'quadmenu'); ?>" />
             </span>
         </form>
         <?php

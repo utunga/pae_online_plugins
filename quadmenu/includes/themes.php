@@ -54,7 +54,7 @@ class Quadmenu_Themes {
 
         $themes = array();
 
-        if (count($quadmenu_themes)) {
+        if (is_array($quadmenu_themes) && count($quadmenu_themes)) {
 
             foreach ($quadmenu_themes as $key => $theme) {
 
@@ -98,6 +98,7 @@ class Quadmenu_Themes {
         } else {
             QuadMenu::send_json_error(esc_html__('Can\'t create theme.', 'quadmenu'));
         }
+
 
         wp_die();
     }

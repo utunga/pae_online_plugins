@@ -545,6 +545,7 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 	 */
 	public function render_view() {
 		$attributes = array();
+		$events_label_plural = tribe_get_event_label_plural();
 
 		/**
 		 * Fires before the embedded view is rendered.
@@ -574,8 +575,24 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 			$attributes[] = 'data-category="' . esc_attr( $this->query_args['tribe_events_cat'] ) . '"';
 		}
 
+		?>
+		<span class="tribe-events-ajax-loading">
+			<img class="tribe-events-spinner-medium" src="<?php esc_attr_e( tribe_events_resource_url( 'images/tribe-loading.gif' ) ); ?>" alt="<?php printf( esc_attr__( 'Loading %s', 'the-events-calendar' ), $events_label_plural ); ?>" />
+		</span>
+		<?php
+
 		// Creates id='tribe-events' container
-		echo '<div ' . implode( ' ', $attributes ) . '>';
+		echo wp_kses_post( '<div ' . implode( ' ', $attributes ) . '>' );
+
+		/**
+		 * Conditionally add the before HTML to shortcode-generated calendars
+		 *
+		 * @since 4.4.27
+		 */
+		if ( tribe_get_option( 'tribeEventsShortcodeBeforeHTML', false ) ) {
+			echo wp_kses_post( tribe_events_before_html() );
+		}
+
 
 		// Include the tribe bar HTML if required
 		if ( $this->is_attribute_truthy( 'tribe-bar', true ) ) {
@@ -584,6 +601,16 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 		}
 
 		tribe_get_view( $this->get_template_object()->view_path );
+
+		/**
+		 * Conditionally add the after HTML to shortcode-generated calendars
+		 *
+		 * @since 4.4.27
+		 */
+		if ( tribe_get_option( 'tribeEventsShortcodeAfterHTML', false ) ) {
+			echo wp_kses_post( tribe_events_after_html() );
+		}
+
 		echo '</div>';
 
 		/**

@@ -24,7 +24,7 @@ abstract class QuadMenuItem {
     protected $description = '';
     private $prefix = '#quadmenu-';
 
-    function __construct(&$output, &$item, $depth = 0, &$args = array(), $id = 0, &$walker, $has_children = false) {
+    function __construct(&$output, &$item, $depth = 0, &$args = array(), $id = 0, &$walker, $has_children = false, $children_elements = false) {
 
         $this->output = &$output;
         $this->item = &$item;
@@ -34,6 +34,7 @@ abstract class QuadMenuItem {
         $this->walker = &$walker;
         $this->source_id = $this->item->db_id;
         $this->has_children = $has_children;
+        $this->children_elements = $children_elements;
 
         $this->item->columns = array_filter((array) $this->item->columns);
 

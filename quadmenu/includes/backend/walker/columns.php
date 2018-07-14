@@ -54,7 +54,7 @@ class QuadMenu_Nav_Menu_Column extends QuadMenu_Settings {
                     <?php
                     $items = $this->get_children_nav_menu_items($column_obj->ID, $menu_id);
 
-                    if (count($items)) :
+                    if (is_array($items) && count($items)) :
                         foreach ($items as $item):
 
                             $menu_obj = get_post($item['id']);
@@ -101,14 +101,13 @@ class QuadMenu_Nav_Menu_Column extends QuadMenu_Settings {
         //require_once ET_BUILDER_DIR . 'functions.php';
         //require_once ET_BUILDER_DIR . 'ab-testing.php';
         //require_once ET_BUILDER_DIR . 'class-et-builder-settings.php';
-
         //et_pb_before_main_editor($menu_obj);
         ?>
         <div id="columns_<?php echo esc_attr($menu_obj->ID); ?>" class="quadmenu-columns sortable-area row" data-drop-area="drop-column" data-sortable-items=".quadmenu-column" data-sortable-handle=".action-top" data-menu_item_parent_id="<?php echo esc_attr($menu_obj->ID); ?>">
             <input data-menu_item_type="custom" data-menu_item_quadmenu="column" data-menu_item_url="#column" data-menu_item_title="<?php esc_html_e('Column', 'quadmenu'); ?>" data-menu_item_parent_id="<?php echo esc_attr($menu_obj->ID); ?>" type="button" class="button button-primary submit-add-to-quadmenu-column" value="<?php esc_html_e('Add Column', 'quadmenu'); ?>" name="add_column"/>
             <span class="spinner"></span>
             <?php
-            if (count($columns)) :
+            if (is_array($columns) && count($columns)) :
                 foreach ($columns as $column):
 
                     $column_obj = get_post($column['id']);
