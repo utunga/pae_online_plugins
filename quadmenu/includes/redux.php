@@ -152,7 +152,7 @@ class QuadMenu_Redux {
             'allow_sub_menu' => true,
             'menu_title' => QUADMENU_NAME,
             'page' => QUADMENU_NAME,
-            'google_api_key' => 'AIzaSyBNsacnx37lZpIIyDyNAjGC1qdE7Z0CrEQ',
+            'google_api_key' => 'AIzaSyBezI3iiTQh5FbkfMhBwG1St41i_PqB3VQ',
             'async_typography' => false,
             'show_options_object' => false,
             'global_variable' => 'quadmenu',
