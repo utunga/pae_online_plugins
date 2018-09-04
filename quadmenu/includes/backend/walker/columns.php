@@ -57,11 +57,7 @@ class QuadMenu_Nav_Menu_Column extends QuadMenu_Settings {
                     if (is_array($items) && count($items)) :
                         foreach ($items as $item):
 
-                            $menu_obj = get_post($item['id']);
-
-                            if (!empty($menu_obj->ID)) {
-                                $menu_obj = wp_setup_nav_menu_item($menu_obj);
-                            }
+                            $menu_obj = QuadMenu::wp_setup_nav_menu_item($item['id']);
 
                             $walker_class_name = apply_filters('quadmenu_edit_nav_menu_walker', 'Walker_Nav_Menu_Edit', null, $menu_obj, null);
 
@@ -112,9 +108,9 @@ class QuadMenu_Nav_Menu_Column extends QuadMenu_Settings {
 
                     $column_obj = get_post($column['id']);
 
-                    if (!empty($column_obj->ID)) {
-                        $column_obj = wp_setup_nav_menu_item($column_obj);
-                    }
+
+                    $column_obj = QuadMenu::wp_setup_nav_menu_item($column['id']);
+
 
                     if (!isset($column_obj->quadmenu) || $column_obj->quadmenu != 'column') {
                         continue;

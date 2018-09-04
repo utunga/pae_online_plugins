@@ -28,7 +28,7 @@ class Tribe__Events__Pro__Advanced_List_Widget extends Tribe__Events__List_Widge
 		add_filter( 'tribe_events_list_widget_query_args', array( $this, 'taxonomy_filters' ) );
 
 		// Do not enqueue if the widget is inactive
-		if ( is_active_widget( false, false, $this->id_base, true ) ) {
+		if ( is_active_widget( false, false, $this->id_base, true ) || is_customize_preview() ) {
 			add_action( 'init', array( $this, 'enqueue_stylesheet' ), 100 );
 		}
 	}
@@ -109,10 +109,10 @@ class Tribe__Events__Pro__Advanced_List_Widget extends Tribe__Events__List_Widge
 		$instance['operand']              = strip_tags( $new_instance['operand'] );
 		$instance['filters']              = maybe_unserialize( $this->clear_filters( $new_instance['filters'] ) );
 
-		// @todo remove after 3.7 (added for continuity when users transition from 3.5.x or earlier to this release)
-		if ( isset( $old_instance['category'] ) ) {
-			$this->include_cat_id( $instance['filters'], $old_instance['category'] );
-			unset( $instance['category'] );
+		if ( isset( $new_instance['jsonld_enable'] ) && $new_instance['jsonld_enable'] == true ) {
+			$instance['jsonld_enable'] = 1;
+		} else {
+			$instance['jsonld_enable'] = 0;
 		}
 
 		return $instance;

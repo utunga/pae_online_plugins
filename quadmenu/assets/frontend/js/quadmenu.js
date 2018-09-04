@@ -311,7 +311,7 @@
     function Plugin(element, options) {
         var plugin = this;
         this.element = element;
-        this.$quadmenu = $(this.element).removeClass('no-js').addClass('js');
+        this.$quadmenu = $(this.element);
         this.$ul = this.$quadmenu.find('ul.quadmenu-navbar-nav');
         this.settings = $.extend({}, defaults, options);
         this.touchenabled = ('ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0);
@@ -346,11 +346,11 @@
             this.quadmenuInitClasses();
             this.quadmenuInitWidth();
             this.quadmenuInitContainerWidth();
+            this.quadmenuInitLazyLoad();
             //this.quadmenuInitNavbarVertical();
             this.quadmenuInitNavbarSticky(); // horizontal
             this.quadmenuInitNavbarOffcanvas();
             this.quadmenuInitNavbarSlideBar(); // horizontal
-            this.quadmenuInitItemActive();
             this.quadmenuInitItemTabs(); // horizontal
             this.quadmenuInitItemCarousel();
             this.quadmenuInitItemLogIn();
@@ -364,6 +364,12 @@
             this.quadmenuInitDropdownRetractors();
             this.quadmenuInitDropdownCloseAll(); // horizontal
             this.quadmenuInitScrollBar(); // horizontal
+            this.quadmenuInit();
+        },
+        quadmenuInit: function () {
+
+            this.$quadmenu.trigger('init.quadmenu');
+
         },
         quadmenuResolveConflics: function () {
 
@@ -383,18 +389,27 @@
         },
         handleClasses: function () {
 
-            var responsive = this.settings.responsive && (window.innerWidth <= this.$quadmenu.data('breakpoint')) ? true : false;
-            if (responsive && this.$quadmenu.hasClass('quadmenu-is-horizontal')) {
-                this.$quadmenu.removeClass('quadmenu-is-horizontal').data('removed-class', 'quadmenu-is-horizontal');
+            var template = this.$quadmenu.data('template'),
+                    mobile = this.settings.responsive && (window.innerWidth <= this.$quadmenu.data('breakpoint')) ? true : false;
+
+            if (!mobile && template == 'collapse') {
+                this.$quadmenu.addClass('quadmenu-is-horizontal');
             }
 
-            if (responsive && this.$quadmenu.hasClass('quadmenu-is-vertical')) {
-                this.$quadmenu.removeClass('quadmenu-is-vertical').data('removed-class', 'quadmenu-is-vertical');
+            if (!mobile && template == 'embed') {
+                this.$quadmenu.addClass('quadmenu-is-horizontal');
             }
 
-            if (!responsive && this.$quadmenu.data('removed-class')) {
-                this.$quadmenu.addClass(this.$quadmenu.data('removed-class'));
+            if (!mobile && template == 'offcanvas') {
+                this.$quadmenu.addClass('quadmenu-is-horizontal');
             }
+
+            if (mobile) {
+                this.$quadmenu.removeClass('quadmenu-is-horizontal');
+            }
+
+            this.$quadmenu.removeClass('no-js').addClass('js');
+
         },
         quadmenuInitDropdownTouchEvents: function (plugin) {
 
@@ -480,7 +495,7 @@
             });
         },
         handleTouchEvents: function (e, target, plugin) {
-            e.stopPropagation();
+            //1326//e.stopPropagation();
             var $target = $(target);
             //disable hoverintent on touch devices
             //$li.off('mouseleave.hoverIntent');
@@ -533,7 +548,7 @@
         handleTouchTap: function (e, target, plugin) {
 
             e.preventDefault();
-            e.stopPropagation();
+            //1326//e.stopPropagation();
             var $target = $(target),
                     $li = $target.parent();
             //prevent clicks
@@ -620,14 +635,14 @@
         },
         handleDropdownCloseStart: function (e, caret, plugin) {
             e.preventDefault();
-            e.stopPropagation();
+            //1326//e.stopPropagation();
             $(caret).on(plugin.touchEnd, function (e) {
                 plugin.handleDropdownCloseEnd(e, this, plugin);
             });
         },
         handleDropdownCloseEnd: function (e, caret, plugin) {
             e.preventDefault();
-            e.stopPropagation();
+            //1326//e.stopPropagation();
             var $li = $(caret).closest('.quadmenu-dropdown.open');
             plugin.closeSubmenu($li);
             $(caret).off(plugin.touchEnd);
@@ -717,15 +732,12 @@
             if (!this.$quadmenu.hasClass('quadmenu-is-horizontal'))
                 return;
             this.$ul.on('shown.quadmenu.dropdown.height', '.dropdown-maxheight', function (e) {
-                e.stopPropagation();
+                //1326//e.stopPropagation();
                 plugin.handleDropdownMaxHeight($(this));
             });
-            this.$ul.on('shown.quadmenu.dropdown.tabheight', '.quadmenu-item-type-tab.dropdown-maxheight', function (e) {
-                e.stopPropagation();
-                var $tab = $(this),
-                        $tabs = $tab.closest('.quadmenu-dropdown-menu > ul');
-                plugin.handleDropdownMaxHeight($tab, $tabs.outerHeight());
-                plugin.handleTabsHeight($tab);
+            this.$ul.on('shown.quadmenu.dropdown.tabheight', '.dropdown-maxheight.quadmenu-item-type-tab', function (e) {
+                //1326//e.stopPropagation();
+                plugin.handleTabsHeight($(this));
             });
             $(window).resize($.debounce(300, function () {
                 plugin.$ul.find('.dropdown-maxheight > .quadmenu-dropdown-menu > ul').css({'height': '', 'overflow-y': ''}).removeData('quadmenu-dropdownHeight').removeData('quadmenu-maxHeight');
@@ -740,21 +752,21 @@
                     $dropdown = $li.find('> .quadmenu-dropdown-menu > ul');
             if (!$dropdown.length)
                 return;
-            //alert($dropdown.data('quadmenu-dropdownHeight'));
 
-            var dropdownHeight = $dropdown.data('quadmenu-dropdownHeight') || $dropdown.outerHeight(),
+            var dropdownHeight = $dropdown.removeAttr('style').outerHeight(),
                     offsetTop = this.getElementOffset($dropdown),
                     scrollTop = $(window).scrollTop(),
                     currentTop = Math.max(0, offsetTop - scrollTop),
                     currentBottom = $(window).height() - currentTop - 15,
                     maxHeight = Math.min(dropdownHeight, currentBottom),
                     Height = parseInt(Math.max(maxHeight, minHeight));
-            $dropdown.css({'height': Height + 'px', 'overflow-y': 'auto'}).data('quadmenu-maxHeight', Height).data('quadmenu-dropdownHeight', dropdownHeight);
+            $dropdown.css({'height': Height + 'px', 'overflow-y': 'auto'}).data('quadmenu-maxHeight', Height);
+
             return Height;
         },
-        quadmenuInitItemActive: function () {
-            this.$ul.find('.quadmenu-current-menu-item:not(.quadmenu-item-type-tab)').addClass('active').first().parents('.quadmenu-item:not(.quadmenu-item-type-tab)').addClass('active');
-        },
+        //quadmenuInitItemActive: function () {
+        //    this.$ul.find('.quadmenu-current-menu-item:not(.quadmenu-item-type-tab)').addClass('active').first().parents('.quadmenu-item:not(.quadmenu-item-type-tab)').addClass('active');
+        //},
         quadmenuInitNavbarSticky: function () {
 
             var plugin = this;
@@ -857,7 +869,7 @@
                 return;
             this.$ul.on('shown.quadmenu.dropdown.float', '.quadmenu-item.quadmenu-dropdown:not(.quadmenu-item-type-tab):not(.quadmenu-item-type-tabs)', function (e) {
 
-                e.stopPropagation();
+                //1326//e.stopPropagation();
                 var $dropdown = $(this).find('> .quadmenu-dropdown-menu:not(.quadmenu-dropdown-stretch-content):not(.quadmenu-dropdown-stretch-dropdown)');
                 if (!$dropdown.length)
                     return;
@@ -926,26 +938,57 @@
                 return;
             $container.css({'width': $(this.$quadmenu.data('selector')).innerWidth() + 'px'});
         },
-        quadmenuInitNavbarVertical: function (plugin) {
+        quadmenuInitLazyLoad: function (plugin) {
 
             plugin = plugin || this;
-            if (!this.$quadmenu.hasClass('quadmenu-is-vertical'))
-                return;
-            plugin.handleNavbarVertical();
-            $(window).resize($.debounce(600, function () {
-                plugin.handleNavbarVertical();
-            }));
-        },
-        handleNavbarVertical: function (plugin) {
 
-            plugin = plugin || this;
-            if (this.$quadmenu.find('.navbar-offcanvas').hasClass('in'))
-                return;
-            setTimeout(function () {
-                plugin.closeAllSubmenus();
-                plugin.$quadmenu.find('[data-quadmenu=offcanvas]').trigger('click');
-            }, 500);
+            this.$quadmenu.on('init.quadmenu shown.quadmenu.collapse shown.quadmenu.dropdown', function (e) {
+
+                $(this).find('img[data-src]:visible').each(function (e) {
+
+                    var $img = $(this),
+                            src = $img.data('src'),
+                            srcset = $img.data('srcset'),
+                            loaded = $img.data('lazyload');
+
+                    if (!loaded) {
+
+                        $img.addClass('quadmenu-lazyload');
+
+                        if (src) {
+                            $img.attr('src', src).removeAttr('data-src').data('lazyload', true);
+                        }
+
+                        if (srcset) {
+                            $img.attr('srcset', srcset).removeAttr('data-srcset').data('lazyload', true);
+                        }
+
+                    }
+
+                });
+
+            });
         },
+        /*quadmenuInitNavbarVertical: function (plugin) {
+         
+         plugin = plugin || this;
+         if (!this.$quadmenu.hasClass('quadmenu-is-vertical'))
+         return;
+         plugin.handleNavbarVertical();
+         $(window).resize($.debounce(600, function () {
+         plugin.handleNavbarVertical();
+         }));
+         },
+         handleNavbarVertical: function (plugin) {
+         
+         plugin = plugin || this;
+         if (this.$quadmenu.find('.navbar-offcanvas').hasClass('in'))
+         return;
+         setTimeout(function () {
+         plugin.closeAllSubmenus();
+         plugin.$quadmenu.find('[data-quadmenu=offcanvas]').trigger('click');
+         }, 500);
+         },*/
         quadmenuInitNavbarOffcanvas: function (plugin) {
 
             plugin = plugin || this;
@@ -971,6 +1014,9 @@
                 $transform.css({'transform': 'translateX(' + translateX + 'px)'});
                 $('.navbar-offcanvas', $(this)).css({'transform': 'translateX(0)'});
 
+
+                $('body').addClass('quadmenu-offcanvas-in');
+
                 $(this).addClass('quadmenu-is-vertical');
             });
 
@@ -981,6 +1027,7 @@
                 $transform.css({'transform': ''});
 
                 $('.navbar-offcanvas', $(this)).removeAttr('style');
+                $('body').removeClass('quadmenu-offcanvas-in');
 
                 $(this).removeClass('quadmenu-is-vertical');
             });
@@ -1047,7 +1094,7 @@
                 return;
             this.$ul.on('shown.quadmenu.dropdown.pscrollbar', '.dropdown-maxheight', function (e) {
 
-                e.stopPropagation();
+                //1326//e.stopPropagation();
                 plugin.$dropdown = $(this).find('> .quadmenu-dropdown-menu > ul');
                 //fix for mousehover ----------------------
                 plugin.$dropdown.scroll($.debounce(500, true, function () {
@@ -1085,7 +1132,7 @@
                 $(this).on('mouseleave', '.ps-scrollbar-y-rail', function () {
                     $psMenu.find('.quadmenu-item > .quadmenu-dropdown-toggle').removeData('quadmenu-killHover');
                 });
-                e.stopPropagation();
+                //1326//e.stopPropagation();
                 $psMenu.perfectScrollbar('update');
             });
             if (plugin.$offcanvas.data('ps-id')) {
@@ -1102,43 +1149,47 @@
         quadmenuInitNavbarSlideBar: function (plugin) {
 
             plugin = plugin || this;
+
             if (!this.$quadmenu.hasClass('quadmenu-is-horizontal') || !this.$quadmenu.hasClass('quadmenu-hover-slidebar'))
                 return;
-            $(window).on('load', function () {
-                setTimeout(function () {
-                    plugin.$ul.append('<li class="quadmenu-hover-slidebar invisible"><span class="bar"></span></li>');
-                    plugin.handleSlideBar(plugin.$ul);
-                }, 1000);
-            });
+
+            setTimeout(function () {
+                plugin.$ul.append('<li class="quadmenu-slidebar invisible"><span class="bar"></span></li>');
+                plugin.handleSlideBar(plugin.$ul);
+            }, 1000);
         },
         handleSlideBar: function (ul, plugin) {
 
             plugin = plugin || this;
-            var $ul = $(ul),
-                    slide_nav = $ul.find('> li.quadmenu-hover-slidebar'),
-                    li = '> li.quadmenu-item.quadmenu-item-level-0:not(.quadmenu-item-type-icon):not(.quadmenu-item-type-search):not(.quadmenu-item-type-cart):not(.quadmenu-item-type-login):not(.quadmenu-item-type-social)',
-                    $subtitle = $ul.find('> li > a > .quadmenu-item-content > .quadmenu-subtitle'),
-                    subtitle = $subtitle.length ? parseInt($subtitle.css('font-size')) : 0,
-                    $open = $ul.find('> li.quadmenu-item.quadmenu-item-level-0.open'),
-                    $active = $open.length ? $open : $ul.find('> li.quadmenu-item.quadmenu-item-level-0.active'),
-                    $current = $active.length ? $active : $ul.find(li).filter(':visible').not('.quadmenu-float-opposite').first();
-            var bottom = function ($ul, $current) {
 
-                if (!$ul.hasClass('sl-middle'))
-                    return 'auto';
-                return Math.round(parseInt($current.find('> a').outerHeight()) * 0.5 - parseInt($current.find('> a').css('font-size')) - subtitle - 5) + 'px';
+            var $ul = $(ul),
+                    slide_nav = $ul.find('> li.quadmenu-slidebar'),
+                    $open = $ul.find('> li.open:visible'),
+                    $item = $ul.find('> li.quadmenu-current-menu-item:visible'),
+                    $ancestor = $ul.find('> li.quadmenu-current-menu-ancestor:visible'),
+                    $current = $ul.find('> li:visible:first-child');
+
+            if ($ancestor.length) {
+                $current = $ancestor;
+            }
+            if ($item.length) {
+                $current = $item;
+            }
+            if ($open.length) {
+                $current = $open;
             }
 
             function slide_nav_css($current) {
-                var width = parseInt($current.find('> a').outerWidth()),
-                        //padding = parseInt($current.css('margin-left') + $current.find('> a').find('> .quadmenu-item-content').css('padding-left')),
-                        pos_left = parseInt($current.position().left),
-                        pos_right = parseInt($current.position().right);
-                slide_nav.css({'width': width + 'px', 'left': pos_left + 'px', 'right': pos_right + 'px', 'bottom': bottom($ul, $current)}).removeClass('invisible');
+                var width = parseFloat($current.find('> a').outerWidth()),
+                        pos_left = parseFloat($current.position().left),
+                        pos_right = parseFloat($current.position().right);
+                slide_nav.css({'width': width + 'px', 'left': pos_left + 'px', 'right': pos_right + 'px'}).removeClass('invisible');
             }
 
             slide_nav_css($current);
+
             slide_nav.data('slidebar-style', slide_nav.attr('style'));
+
             //handle sticky transforms
             this.$ul.on('sticky.quadmenu.navbar.slidebar unsticky.quadmenu.navbar.slidebar', function () {
                 slide_nav.addClass('invisible');
@@ -1150,33 +1201,27 @@
                 slide_nav.data('slidebar-style', slide_nav.attr('style'));
             });
             //handle mouse events
-            $ul.find(li).on('hover.slidebar', function () {
+            $ul.find('> li.quadmenu-item.quadmenu-has-link').on('hover.slidebar', function (e) {
                 slide_nav_css($(this));
             });
-            if (this.$ul.hasClass('quadmenu-trigger-click')) {
-                $ul.find(li).on('hidden.quadmenu.dropdown.slidebar', function () {
-                    slide_nav.attr('style', slide_nav.data('slidebar-style')).show();
-                });
-                return;
-            }
 
-            if (typeof $.fn.hoverIntent === 'undefined') {
+            $ul.find('> li.quadmenu-item.quadmenu-has-link').on('mouseleave.slidebar', function (e) {
+                slide_nav.attr('style', slide_nav.data('slidebar-style')).show();
+            });
 
-                $ul.on('mouseleave.slidebar', function () {
-                    slide_nav.attr('style', slide_nav.data('slidebar-style')).show();
-                });
-                return;
-            }
+            $ul.on('shown.quadmenu.dropdown.slidebar', '> li.quadmenu-item.quadmenu-has-link', function (e) {
+                if ($(this).find('> a').hasClass('click')) {
+                    slide_nav_css($(this));
+                    slide_nav.data('slidebar-style', slide_nav.attr('style'));
+                }
+            });
 
-            $ul.hoverIntent({
-                over: function () {
-                },
-                out: function () {
-                    slide_nav.attr('style', slide_nav.data('slidebar-style')).show();
-                },
-                //sensitivity: plugin.settings.intent_sensitivity,
-                timeout: plugin.settings.intent_timeout,
-                interval: plugin.settings.intent_interval
+            $ul.on('hide.quadmenu.dropdown.slidebar', '> li.quadmenu-item.quadmenu-has-link', function (e) {
+
+                if ($(this).find('> a').hasClass('click')) {
+                    slide_nav_css($current);
+                    slide_nav.data('slidebar-style', slide_nav.attr('style'));
+                }
             });
         },
         quadmenuInitItemTabs: function (plugin) {
@@ -1197,14 +1242,13 @@
             if (!this.$quadmenu.hasClass('quadmenu-is-horizontal'))
                 return;
             this.$ul.on('shown.quadmenu.dropdown.tabs', '.quadmenu-item-type-tabs', function (e) {
-                e.stopPropagation();
-                var $tab = $(this).find('.quadmenu-item-type-tab');
-                if ($tab.filter('.open').length) {
-                    $tab.filter('.open').trigger('shown.quadmenu.dropdown.tabheight');
-                    return;
-                }
 
-                plugin.openSubmenu($tab.first());
+                if (!$(e.target).hasClass('quadmenu-item-type-tabs'))
+                    return;
+
+                plugin.openSubmenu($(this).find('.quadmenu-item-type-tab:first'));
+
+
             });
         },
         handleTabsHeight: function (open) {
@@ -1255,14 +1299,16 @@
 
             });
             this.$ul.on('shown.quadmenu.dropdown.carousel', '.quadmenu-item', function (e) {
-                e.stopPropagation();
+                // breakes the shown.quadmenu.dropdown event
+                //e.stopPropagation();
 
                 var $owl = $(this).find('.owl-carousel');
 
-                if (!$owl.length)
-                    return;
+                if ($owl.length) {
 
-                plugin.handleCarousel($owl, plugin);
+                    plugin.handleCarousel($owl, plugin);
+
+                }
 
             });
 
@@ -1327,7 +1373,7 @@
 
                 var $li = $(this);
                 $li.find('[data-toggle=form]').on('click', function () {
-                    e.stopPropagation();
+                    //1326//e.stopPropagation();
                     e.preventDefault();
                     $li.find($(this).data('target')).fadeIn().removeClass('hidden');
                     $li.find($(this).data('current')).fadeOut().addClass('hidden');
@@ -1336,49 +1382,59 @@
                     $li.trigger('shown.quadmenu.dropdown.height');
                     $li.trigger('shown.quadmenu.dropdown.pscrollbar');
                 });
-                plugin.handleRegister(e, $li);
+                plugin.handleForm(e, $li);
             });
         },
-        handleRegister: function (e, li) {
+        handleForm: function (e, li) {
 
-            var $li = $(li),
-                    $form = $li.find('form.quadmenu-registration-form'),
-                    $button = $form.find('input[name=quadmenu_add_user]');
-            $button.click(function (event) {
+            var $li = $(li);
+
+            $li.find('form').on('submit', function (e) {
 
                 //Prevent default action, so when user clicks button he doesn't navigate away from page
-                if (event.preventDefault) {
-                    event.preventDefault();
+                if (e.preventDefault) {
+                    e.preventDefault();
                 } else {
-                    event.returnValue = false;
+                    e.returnValue = false;
                 }
+
+                var $form = $(this);
 
                 var $dropdown = $form.closest('.quadmenu-dropdown-menu'),
                         $message = $form.find('.quadmenu-result-message');
+
+                console.log($form.find('input[name=action]').val());
+
                 $message.empty();
                 // Collect data from inputs
                 $.ajax({
                     type: 'post',
                     url: ajaxurl,
                     data: {
-                        action: 'quadmenu_register_user',
-                        nonce: quadmenu.nonce,
+                        action: $form.find('input[name=action]').val(),
                         user: $form.find('input[name=quadmenu_username]').val(),
                         pass: $form.find('input[name=quadmenu_pass]').val(),
                         mail: $form.find('input[name=quadmenu_email]').val(),
                         name: $form.find('input[name=quadmenu_name]').val(),
                         nick: $form.find('input[name=quadmenu_nick]').val(),
+                        nonce: quadmenu.nonce,
                     },
                     beforeSend: function () {
                         $dropdown.addClass('quadmenu-dropdown-mask');
+
+                        console.log('beforeSend');
                     },
                     complete: function () {
+
+                        console.log('complete');
 
                         setTimeout(function () {
                             $dropdown.removeClass('quadmenu-dropdown-mask');
                         }, 600);
                     },
                     success: function (response) {
+
+                        console.log(response);
 
                         $message.append(response.data);
                         if (response.success === true) {
@@ -1406,11 +1462,11 @@
                 return;
             this.$ul.on('shown.quadmenu.dropdown.social', '.quadmenu-item-type-social', function () {
                 plugin.$ul.find('> li.quadmenu-item.quadmenu-item-level-0:not(.quadmenu-item-type-social)').addClass('invisible');
-                plugin.$ul.find('> li.quadmenu-hover-slidebar').addClass('invisible');
+                plugin.$ul.find('> li.quadmenu-slidebar').addClass('invisible');
             });
             this.$ul.on('hidden.quadmenu.dropdown.social', '.quadmenu-item-type-social', function () {
                 plugin.$ul.find('> li.quadmenu-item.quadmenu-item-level-0:not(.quadmenu-item-type-social)').removeClass('invisible');
-                plugin.$ul.find('> li.quadmenu-hover-slidebar').removeClass('invisible');
+                plugin.$ul.find('> li.quadmenu-slidebar').removeClass('invisible');
             });
         },
         quadmenuInitItemCart: function (plugin) {
@@ -1419,17 +1475,26 @@
 
             var $cart = plugin.$quadmenu.find('li.quadmenu-item-type-cart');
 
-            plugin.cart_total = $cart.find('.quadmenu-cart-total');
-
             $cart.each(function () {
 
                 var $li = $(this),
-                        url = $li.find('> a').data('cart-url');
+                        url = $li.find('> a').data('cart-url'),
+                        animation = $li.find('> a').data('cart-animation');
 
                 if (window.location.href === url) {
                     $cart.removeClass('quadmenu-dropdown');
                     $cart.find('> a').attr('href', 'javascript:void(0)');
                 }
+
+                $(document).bind('added_to_cart removed_from_cart edd_quantity_updated', function (e, cart) {
+
+                    $cart.find('.quadmenu-cart-qty', $li).addClass(animation);
+
+                    setTimeout(function () {
+                        $cart.find('.quadmenu-cart-qty', $li).removeClass(animation);
+                    }, 500);
+
+                });
 
                 $(document).bind('added_to_cart removed_from_cart', function (e, cart) {
                     plugin.handleWooCart(plugin, $li, $(cart['div.widget_shopping_cart_content']), url);
@@ -1481,8 +1546,6 @@
                     $total = $li.find('.quadmenu-cart-total'),
                     $qty = $li.find('.quadmenu-cart-qty');
 
-            $qty.addClass('animate');
-
             $total.html(total);
 
             $qty.html(qty);
@@ -1519,6 +1582,7 @@
 
         var args = arguments;
         if (options === undefined || typeof options === 'object') {
+
             return this.each(function () {
                 if (!$.data(this, 'plugin_quadmenu')) {
                     $.data(this, 'plugin_quadmenu', new Plugin(this, options));
@@ -1547,21 +1611,17 @@
     };
 })(jQuery, window, document);
 //console.time('Time');
-
 (function ($) {
 
-    var quadmenu_initialized = false;
     function quadmenu_init() {
-
-        if (quadmenu_initialized)
-            return;
-        quadmenu_initialized = true;
         $('nav#quadmenu').quadmenu();
     }
 
     quadmenu_init();
+
     $(window).on('load', function () {
         quadmenu_init();
     });
+
 })(jQuery);
 //console.timeEnd('Time');

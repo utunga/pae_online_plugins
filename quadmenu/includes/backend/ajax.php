@@ -132,7 +132,7 @@ class QuadMenu_Ajax extends QuadMenu_Settings {
             foreach ($post_types as $post_type) {
                 $item = new stdClass();
                 $loop_index++;
-                
+
                 $item->object_id = $loop_index;
                 $item->db_id = 0;
                 $item->object = $post_type->name;
@@ -176,9 +176,9 @@ class QuadMenu_Ajax extends QuadMenu_Settings {
       QuadMenu::send_json_error(esc_html__('Please reload page.', 'quadmenu'));
       }
 
-      $menu_id = absint($_REQUEST['menu_id']);
+      $menu_id = absint($_GET['menu_id']);
 
-      $key = sanitize_text_field($_REQUEST['current_theme']);
+      $key = sanitize_text_field($_GET['current_theme']);
 
       if ($menu_id > 0 && is_nav_menu($menu_id)) {
 
@@ -186,7 +186,7 @@ class QuadMenu_Ajax extends QuadMenu_Settings {
 
       QuadMenu::send_json_error(json_encode($saved_themes));
 
-      if (add_term_meta($menu_id, QUADMENU_THEME_DB_KEY, array_merge((array) $saved_themes, (array) $_REQUEST['quadmenu_themes']), true)) {
+      if (add_term_meta($menu_id, QUADMENU_THEME_DB_KEY, array_merge((array) $saved_themes, (array) $_GET['quadmenu_themes']), true)) {
       QuadMenu::send_json_success();
       } else {
       QuadMenu::send_json_error(sprintf(esc_html__('Failed to add theme', 'quadmenu')));
@@ -202,7 +202,7 @@ class QuadMenu_Ajax extends QuadMenu_Settings {
             QuadMenu::send_json_error(esc_html__('Please reload page.', 'quadmenu'));
         }
 
-        if (empty($_REQUEST['menu-item'])) {
+        if (empty($_GET['menu-item'])) {
             QuadMenu::send_json_error(esc_html__('Undefined menu-item var.', 'quadmenu'));
             wp_die();
         }
@@ -214,11 +214,11 @@ class QuadMenu_Ajax extends QuadMenu_Settings {
 
         $menu_items_data = array();
 
-        foreach ((array) $_REQUEST['menu-item'] as $menu_item_data) {
+        foreach ((array) $_GET['menu-item'] as $menu_item_data) {
             $menu_items_data[] = $menu_item_data;
         }
 
-        $menu_id = absint($_REQUEST['menu_id']);
+        $menu_id = absint($_GET['menu_id']);
 
         $item_ids = $this->ajax_create_nav_menu_items($menu_id, $menu_items_data);
 
@@ -229,12 +229,7 @@ class QuadMenu_Ajax extends QuadMenu_Settings {
 
         foreach ((array) $item_ids as $menu_item_id) {
 
-            $menu_obj = get_post($menu_item_id);
-
-            if (empty($menu_obj->ID))
-                continue;
-
-            $menu_obj = wp_setup_nav_menu_item($menu_obj);
+            $menu_obj = QuadMenu::wp_setup_nav_menu_item($menu_item_id);
 
             $menu_obj->label = $menu_obj->title; // don't show "(pending)" in ajax-added items
 
@@ -325,11 +320,9 @@ class QuadMenu_Ajax extends QuadMenu_Settings {
 
         if (isset($items->{$args['menu-item-quadmenu']}->parent)) {
 
-            $parent_obj = get_post($args['menu-item-parent-id']);
 
-            if (!empty($parent_obj->ID)) {
 
-                $parent_obj = wp_setup_nav_menu_item($parent_obj);
+            if ($parent_obj = QuadMenu::wp_setup_nav_menu_item($args['menu-item-parent-id'])) {
 
                 if ($items->{$args['menu-item-quadmenu']}->parent === 'main') {
                     QuadMenu::send_json_error(sprintf(esc_html__('Failed to add %s. Only can be placed on the main menu.', 'quadmenu'), $items->{$args['menu-item-quadmenu']}->label));
@@ -352,9 +345,9 @@ class QuadMenu_Ajax extends QuadMenu_Settings {
             QuadMenu::send_json_error(esc_html__('Please reload page.', 'quadmenu'));
         }
 
-        $menu_item_id = absint($_REQUEST['menu_item_id']);
+        $menu_item_id = absint($_GET['menu_item_id']);
 
-        $menu_id = absint($_REQUEST['menu_id']);
+        $menu_id = absint($_GET['menu_id']);
 
         $deleted = $this->delete_children_nav_menu_items($menu_item_id, $menu_id);
 
@@ -369,16 +362,16 @@ class QuadMenu_Ajax extends QuadMenu_Settings {
             QuadMenu::send_json_error(esc_html__('Please reload page.', 'quadmenu'));
         }
 
-        if (empty($_REQUEST['menu-item'])) {
+        if (empty($_GET['menu-item'])) {
             QuadMenu::send_json_error(esc_html__('Undefined menu-item var.', 'quadmenu'));
             wp_die();
         }
 
         $updated = array();
 
-        if (is_array($_REQUEST['menu-item'])) {
+        if (is_array($_GET['menu-item'])) {
 
-            foreach ($_REQUEST['menu-item'] as $menu_item_id => $menu_item_data) {
+            foreach ($_GET['menu-item'] as $menu_item_id => $menu_item_data) {
 
                 $menu_item_parent_id = absint($menu_item_data['menu-item-parent-id']);
 
@@ -403,17 +396,13 @@ class QuadMenu_Ajax extends QuadMenu_Settings {
             QuadMenu::send_json_error(esc_html__('Please reload page.', 'quadmenu'));
         }
 
-        $menu_id = absint($_REQUEST['menu_id']);
+        $menu_id = absint($_GET['menu_id']);
 
-        $menu_item_id = absint($_REQUEST['menu_item_id']);
+        $menu_item_id = absint($_GET['menu_item_id']);
 
-        $menu_item_depth = absint($_REQUEST['menu_item_depth']);
+        $menu_item_depth = absint($_GET['menu_item_depth']);
 
-        $menu_obj = get_post($menu_item_id);
-
-        if (!empty($menu_obj->ID)) {
-            $menu_obj = wp_setup_nav_menu_item($menu_obj);
-        }
+        $menu_obj = QuadMenu::wp_setup_nav_menu_item($menu_item_id);
 
         ob_start();
         ?> 
@@ -447,53 +436,53 @@ class QuadMenu_Ajax extends QuadMenu_Settings {
             QuadMenu::send_json_error(esc_html__('Please reload page.', 'quadmenu'));
         }
 
-        $menu_item_id = absint($_REQUEST['menu_item_id']);
+        $menu_item_id = absint($_GET['menu_item_id']);
 
-        $menu_id = absint($_REQUEST['menu_id']);
+        $menu_id = absint($_GET['menu_id']);
 
         if ($menu_item_id > 0) {
 
-            if (isset($_REQUEST['menu-item-quadmenu-settings']) && is_array($_REQUEST['menu-item-quadmenu-settings'])) {
+            if (isset($_GET['menu-item-quadmenu-settings']) && is_array($_GET['menu-item-quadmenu-settings'])) {
 
                 $saved_settings = array_filter((array) get_post_meta($menu_item_id, QUADMENU_DB_KEY, true));
 
-                if (is_array($saved_settings) && $updated_settings = array_merge($saved_settings, $_REQUEST['menu-item-quadmenu-settings'])) {
+                if (is_array($saved_settings) && $updated_settings = array_merge($saved_settings, $_GET['menu-item-quadmenu-settings'])) {
                     update_post_meta($menu_item_id, QUADMENU_DB_KEY, $updated_settings);
                 }
             }
 
-            if (isset($_REQUEST['menu-item-url'])) {
-                update_post_meta($menu_item_id, '_menu_item_url', esc_url_raw($_REQUEST['menu-item-url']));
+            if (isset($_GET['menu-item-url'])) {
+                update_post_meta($menu_item_id, '_menu_item_url', esc_url_raw($_GET['menu-item-url']));
             }
-            if (isset($_REQUEST['menu-item-parent-id'])) {
-                update_post_meta($menu_item_id, '_menu_item_menu_item_parent', strval((int) $_REQUEST['menu-item-parent-id']));
+            if (isset($_GET['menu-item-parent-id'])) {
+                update_post_meta($menu_item_id, '_menu_item_menu_item_parent', strval((int) $_GET['menu-item-parent-id']));
             }
-            if (isset($_REQUEST['menu-item-target'])) {
-                update_post_meta($menu_item_id, '_menu_item_target', sanitize_key($_REQUEST['menu-item-target']));
+            if (isset($_GET['menu-item-target'])) {
+                update_post_meta($menu_item_id, '_menu_item_target', sanitize_key($_GET['menu-item-target']));
             }
-            if (isset($_REQUEST['menu-item-classes'])) {
-                $_REQUEST['menu-item-classes'] = array_map('sanitize_html_class', explode(' ', $_REQUEST['menu-item-classes']));
-                update_post_meta($menu_item_id, '_menu_item_classes', $_REQUEST['menu-item-classes']);
+            if (isset($_GET['menu-item-classes'])) {
+                $_GET['menu-item-classes'] = array_map('sanitize_html_class', explode(' ', $_GET['menu-item-classes']));
+                update_post_meta($menu_item_id, '_menu_item_classes', $_GET['menu-item-classes']);
             }
-            if (isset($_REQUEST['menu-item-xfn'])) {
-                $_REQUEST['menu-item-xfn'] = join(' ', array_map('sanitize_html_class', explode(' ', $_REQUEST['menu-item-xfn'])));
-                update_post_meta($menu_item_id, '_menu_item_xfn', $_REQUEST['menu-item-xfn']);
+            if (isset($_GET['menu-item-xfn'])) {
+                $_GET['menu-item-xfn'] = join(' ', array_map('sanitize_html_class', explode(' ', $_GET['menu-item-xfn'])));
+                update_post_meta($menu_item_id, '_menu_item_xfn', $_GET['menu-item-xfn']);
             }
 
-            if (isset($_REQUEST['menu-item-title']) || isset($_REQUEST['menu-item-attr-title']) || isset($_REQUEST['menu-item-description'])) {
+            if (isset($_GET['menu-item-title']) || isset($_GET['menu-item-attr-title']) || isset($_GET['menu-item-description'])) {
 
                 $post = array(
                     'ID' => $menu_item_id,
                 );
 
-                if (isset($_REQUEST['menu-item-title'])) {
-                    $post['post_title'] = apply_filters('the_title', $_REQUEST['menu-item-title']);
+                if (isset($_GET['menu-item-title'])) {
+                    $post['post_title'] = apply_filters('the_title', $_GET['menu-item-title']);
                 }
-                if (isset($_REQUEST['menu-item-attr-title'])) {
-                    $post['post_excerpt'] = wp_kses_post($_REQUEST['menu-item-attr-title']);
+                if (isset($_GET['menu-item-attr-title'])) {
+                    $post['post_excerpt'] = wp_kses_post($_GET['menu-item-attr-title']);
                 }
-                if (isset($_REQUEST['menu-item-description'])) {
-                    $post['post_content'] = wp_kses_post($_REQUEST['menu-item-description']);
+                if (isset($_GET['menu-item-description'])) {
+                    $post['post_content'] = wp_kses_post($_GET['menu-item-description']);
                 }
 
                 //'post_type' => 'nav_menu_item',
@@ -518,81 +507,6 @@ class QuadMenu_Ajax extends QuadMenu_Settings {
         wp_die();
     }
 
-    /* public function setup_nav_menu_item($item) {
-
-      global $wp_registered_widgets;
-
-      $items = QuadMenu_Configuration::custom_nav_menu_items();
-
-      if (strpos($item->url, $this->prefix) !== false) {
-      $item->quadmenu = str_replace($this->prefix, '', $item->url);
-      }
-
-      if (isset($item->quadmenu) && $item->type == 'custom') {
-      if (!empty($items->{$item->quadmenu}->label)) {
-      $item->type_label = '[' . $items->{$item->quadmenu}->label . ']';
-      }
-      }
-
-      if (isset($item->quadmenu) && $item->object == 'custom') {
-      $item->object = $item->quadmenu;
-      }
-
-      if (empty($item->quadmenu)) {
-      $item->quadmenu = $item->type;
-      }
-
-      if (!empty($item->menu_item_parent)) {
-
-      $parent_obj = get_post($item->menu_item_parent);
-
-      if (!empty($parent_obj->ID)) {
-      $parent_obj = wp_setup_nav_menu_item($parent_obj);
-      }
-
-      if (!empty($parent_obj->quadmenu)) {
-      $item->quadmenu_menu_item_parent = $parent_obj->quadmenu;
-      }
-      } else {
-      $item->quadmenu_menu_item_parent = 'main';
-      }
-
-      if (!empty($items->{$item->quadmenu}->parent)) {
-
-      $item->quadmenu_allowed_parents = $items->{$item->quadmenu}->parent;
-
-      // Main
-      // -----------------------------------------------------------------
-      if (!is_array($item->quadmenu_allowed_parents) && $item->quadmenu_allowed_parents === 'main') {
-      $item->menu_item_parent = 0;
-      $item->quadmenu_menu_item_parent = 'main';
-      }
-
-      // Invalid
-      // -----------------------------------------------------------------
-      if (is_array($item->quadmenu_allowed_parents) && !in_array($item->quadmenu_menu_item_parent, $item->quadmenu_allowed_parents)) {
-      $item->_invalid = true;
-      }
-
-      // Invalid
-      // -----------------------------------------------------------------
-      if (!is_array($item->quadmenu_allowed_parents) && $item->quadmenu_allowed_parents != $item->quadmenu_menu_item_parent) {
-      $item->_invalid = true;
-      }
-
-      //if (is_array($item->quadmenu_allowed_parents) && in_array('main', $item->quadmenu_allowed_parents)) {
-      //}
-      } else {
-      $item->quadmenu_allowed_parents = 'all';
-      }
-
-      if ($item->quadmenu == 'widget' && (empty($item->widget_id) || !isset($wp_registered_widgets[$item->widget_id]))) {
-      $item->_invalid = true;
-      }
-
-      return $item;
-      } */
-
     public function update_nav_menu_item($menu_id, $menu_item_db_id, $args) {
 
         if (!empty($args['menu-item-quadmenu'])) {
@@ -605,110 +519,6 @@ class QuadMenu_Ajax extends QuadMenu_Settings {
         }
     }
 
-    /* public function get_tagged_theme_locations_for_menu_id($menu_id) {
-
-      global $quadmenu_locations;
-
-      $locations = array();
-
-      $nav_menu_locations = get_nav_menu_locations();
-
-      foreach (get_registered_nav_menus() as $id => $name) {
-
-      if (!isset($nav_menu_locations[$id]))
-      continue;
-
-      if (!isset($quadmenu_locations[$id]))
-      continue;
-
-      if ($nav_menu_locations[$id] != $menu_id)
-      continue;
-
-      $locations[$id] = $name;
-      }
-
-      return $locations;
-      } */
-
-    /* public function nav_menu_themes() {
-
-      global $quadmenu_themes;
-      $menu_locations = $this->get_tagged_theme_locations_for_menu_id(_QuadMenu()->nav_menu_selected_id());
-      ?>
-      <div id="quadmenu-themes-post" class="posttypediv">
-      <ul id="quadmenu-themes-post-tabs" class="quadmenu-themes-tabs add-menu-item-tabs">
-      <?php
-      $i = 0;
-      foreach ($menu_locations as $location => $name) :
-      ?>
-      <li <?php echo $i < 1 ? 'class="tabs"' : ''; ?>>
-      <a class="nav-tab-link" data-type="tabs-panel-quadmenu-themes-<?php echo esc_attr($location); ?>" href="#tabs-panel-quadmenu-themes-<?php echo esc_attr($location); ?>">
-      <?php esc_html_e($name); ?>
-      </a>
-      </li>
-      <?php
-      $i++;
-      endforeach;
-      ?>
-      </ul>
-      <?php
-      $ii = 0;
-      foreach ($menu_locations as $location => $name) :
-
-      $current = quadmenu_get_menu_theme($location, _QuadMenu()->nav_menu_selected_id());
-      ?>
-      <div id="tabs-panel-quadmenu-themes-<?php echo esc_attr($location); ?>" class="tabs-panel<?php echo $ii < 1 ? ' tabs-panel-active' : ' tabs-panel-inactive'; ?>">
-      <ul id="postchecklist-<?php echo esc_attr($location); ?>" class="categorychecklist form-no-clear">
-      <?php
-      foreach ($quadmenu_themes as $key => $theme):
-      ?>
-      <li>
-      <label class="menu-item-title">
-      <input type="radio" class="menu-item-checkbox" name="quadmenu_themes[<?php echo esc_attr($location); ?>]" value="<?php echo esc_attr($key); ?>" <?php checked($key, $current); ?>> <?php echo esc_html($theme); ?> <a style="float:right" href="<?php echo esc_url(Quadmenu::taburl('quadmenu_theme_' . $key)); ?>">(<?php echo esc_html__('Edit', 'quadmenu'); ?>)</a>
-      </label>
-      </li>
-      <?php endforeach; ?>
-      </ul>
-      </div>
-      <?php
-      $ii++;
-      endforeach;
-      ?>
-
-      </div>
-      <?php
-      } */
-
-    /* public function nav_menu_themes() {
-
-      global $quadmenu_themes;
-
-      $current = quadmenu_get_menu_theme(_QuadMenu()->nav_menu_selected_id());
-
-      ?>
-      <div id="posttype-quadmenu-themes" class="posttypediv">
-      <div id="tabs-panel-quadmenu-themes" class="tabs-panel tabs-panel-active">
-      <ul id ="quadmenu-themes-checklist" class="categorychecklist form-no-clear">
-      <?php
-      foreach ($quadmenu_themes as $key => $theme):
-      ?>
-      <li>
-      <label class="menu-item-title">
-      <input type="radio" class="menu-item-checkbox" name="<?php echo esc_attr($key); ?>" value="<?php echo esc_attr($key); ?>" <?php checked($key, $current); ?>> <?php echo esc_html($theme); ?> <a style="float:right" href="<?php echo esc_url(Quadmenu::taburl('quadmenu_theme_' . $key)); ?>">(<?php echo esc_html__('Edit', 'quadmenu'); ?>)</a>
-      </label>
-      </li>
-
-      <?php endforeach; ?>
-      </ul>
-      </div>
-      </div>
-      <?php
-      } */
 }
 
 new QuadMenu_Ajax();
-
-
-
-
-

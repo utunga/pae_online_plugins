@@ -255,7 +255,7 @@ tribe_events_pro_admin.recurrence = {
 		format = format.replace( 'm', 'MM' ).replace( 'd', 'DD' ).replace( 'Y', 'YYYY' );
 
 		var start_month = moment( $start_date.val(), format ).format( 'M' );
-		var $select = $rule.find( '[data-field="custom-year-month"]' );
+		var $select     = $rule.find( '[data-field="custom-year-month"]' );
 
 		// When you already have content we bail
 		if ( $select.val() ) {
@@ -315,9 +315,8 @@ tribe_events_pro_admin.recurrence = {
 			var $same_day_text = $rule.find( '.recurrence-same-day-text' );
 
 			var $start_date = $( document.getElementById( 'EventStartDate' ) );
-			var format = my.convert_date_format_php_to_moment( tribe_dynamic_help_text.datepicker_format );
-
-			var start_day = moment( $start_date.val(), format ).format( 'D' );
+			var format      = my.convert_date_format_php_to_moment( tribe_dynamic_help_text.datepicker_format );
+			var start_day   = moment( $start_date.val(), format ).format( 'D' );
 
 			$same_day_text.html( tribe_events_pro_recurrence_strings.recurrence['same-day-month-' + start_day] );
 		} );
@@ -735,6 +734,10 @@ tribe_events_pro_admin.recurrence = {
 		this.$recurrence_rules.each( function() {
 			my.update_rule_recurrence_text( $( this ) );
 		} );
+
+		this.$exclusion_rules.each( function() {
+			my.update_rule_recurrence_text( $( this ) );
+		} );
 	};
 
 	/**
@@ -841,12 +844,14 @@ tribe_events_pro_admin.recurrence = {
 				month_day_description = month_day_description.replace( '%1$s', tribe_events_pro_recurrence_strings.date.weekdays[ parseInt( month_day, 10 ) - 1 ] );
 			}
 		} else if ( 'yearly' === type ) {
+			var same_day = $rule.find( '[data-field="year-same-day"] option:selected' ).val();
 			var month_number = $rule.find( '[data-field="custom-year-month-number"]' ).val();
 			var month_day = $rule.find( '[data-field="custom-year-month-day"]' ).val();
 
 			var months = [];
+			var month_values = $rule.find( '[data-field="custom-year-month"]' ).val().split(',');
 
-			$.each( $rule.find( '[data-field="custom-year-month"]' ).select2( 'val' ), function( i, month ) {
+			$.each( month_values, function( i, month ) {
 				months.push( tribe_events_pro_recurrence_strings.date.months[ parseInt( month, 10 ) - 1 ] );
 			} );
 
@@ -860,27 +865,16 @@ tribe_events_pro_admin.recurrence = {
 				month_names = month_names.replace( /(.*),/, '$1, ' + tribe_events_pro_recurrence_strings.date.collection_joiner );
 			}
 
-			var same_day = $rule.find( '[data-field="year-same-day"] option:selected' ).val();
-
-			if ( '0' === same_day ) {
+			if ( 'yes' === same_day || ! isNaN( month_number ) ) {
 				month_number = day_number;
 				key += '-numeric';
-			}
+			}  else {
+				day_number = month_number;
 
-			// if the month number IS a number, then set the 'day' to blank so it doesn't display
-			if ( isNaN( parseInt( month_number, 10 ) ) ) {
 				month_day_description = tribe_events_pro_recurrence_strings.date[ month_number.toLowerCase() + '_x' ];
-
-				if ( ! isNaN( month_day ) && month_day > 0 ) {
-					month_day_description = month_day_description.replace( '%1$s', tribe_events_pro_recurrence_strings.date.weekdays[ parseInt( month_day, 10 ) - 1 ] );
-				} else if ( ! isNaN( month_day ) ) {
-					month_day_description = month_day_description.replace( '%1$s', tribe_events_pro_recurrence_strings.date.day );
-				} else {
-					month_day_description = month_day_description.replace( '%1$s', tribe_events_pro_recurrence_strings.date.day_placeholder );
-				}
-			} else {
-				month_day_description = tribe_events_pro_recurrence_strings.date.day_of_month.replace( '%1$s', parseInt( month_number, 10 ) );
+				month_day_description = month_day_description.replace( '%1$s', tribe_events_pro_recurrence_strings.date.weekdays[ parseInt( month_day, 10 ) - 1 ] );
 			}
+
 		} else if ( 'date' === type ) {
 			var single_date = $rule.find( 'input.tribe-datepicker' ).val();
 

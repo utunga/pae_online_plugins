@@ -52,7 +52,7 @@ class QuadMenu_Settings extends QuadMenu_Configuration {
             return $childrens;
         }
 
-        if (is_array($menu = wp_get_nav_menu_items($menu_id)) && count($menu)) {
+        if (is_array($menu = $this->wp_get_nav_menu_items($menu_id)) && count($menu)) {
 
             foreach ($menu as $item) {
 
@@ -68,6 +68,18 @@ class QuadMenu_Settings extends QuadMenu_Configuration {
         }
 
         return $childrens;
+    }
+
+    function wp_get_nav_menu_items($menu_id) {
+
+        if (!$data = wp_cache_get('quadmenu', 'wp_get_nav_menu_items')) {
+
+            $data = wp_get_nav_menu_items($menu_id);
+
+            wp_cache_add('quadmenu', $data, 'wp_get_nav_menu_items');
+        }
+
+        return $data;
     }
 
     public function nav_menu_item_settings($setting, $item) {
@@ -139,7 +151,7 @@ class QuadMenu_Settings extends QuadMenu_Configuration {
                     $value = implode(' ', $value);
                 }
                 ?>
-                <input type="number" step="<?php echo esc_attr($ops['step']); ?>" min="<?php echo esc_attr($ops['min']); ?>" max="<?php echo esc_attr($ops['max']); ?>" id="<?php echo esc_attr($id); ?>" class="<?php echo esc_attr($class); ?>" name="<?php echo esc_attr($name); ?>" placeholder="<?php echo esc_html($setting['placeholder']); ?>" value="<?php echo esc_html($value); ?>" />
+                <input type="number" step="<?php echo esc_attr($ops['step']); ?>" min="<?php echo esc_attr($ops['min']); ?>" max="<?php echo esc_attr($ops['max']); ?>" id="<?php echo esc_attr($id); ?>" class="<?php echo esc_attr($class); ?>" name="<?php echo esc_attr($name); ?>" value="<?php echo esc_html($value); ?>" />
                 <?php
                 break;
 
@@ -211,11 +223,11 @@ class QuadMenu_Settings extends QuadMenu_Configuration {
                                 ?>
                                 <div class="col<?php echo esc_attr($size) ?>">
                                     <select id="menu-item-width<?php echo esc_attr($size); ?>-columns" class="menu-item-quadmenu-setting menu-item-columns<?php echo esc_attr($size); ?>" name="menu-item-quadmenu-settings[columns][]">
-                                        <?php //if ($size != ''):       ?>
+                                        <?php //if ($size != ''):        ?>
                                         <option value="">
                                             <?php esc_html_e('Inherit from smaller', 'quadmenu'); ?>
                                         </option>
-                                        <?php //endif;      ?>
+                                        <?php //endif;       ?>
                                         <?php
                                         for ($i = 1; $i <= 12; $i++) :
                                             $current = 'col' . $size . '-' . $i;
@@ -469,20 +481,16 @@ class QuadMenu_Settings extends QuadMenu_Configuration {
             QuadMenu::send_json_error(esc_html__('Please reload page.', 'quadmenu'));
         }
 
-        $panel = sanitize_text_field($_POST['menu_item_panel']);
+        $panel = sanitize_text_field($_GET['menu_item_panel']);
 
-        $menu_item_id = absint($_POST['menu_item_id']);
+        $menu_item_id = absint($_GET['menu_item_id']);
 
-        $menu_id = absint($_POST['menu_id']);
+        $menu_id = absint($_GET['menu_id']);
 
         if (ob_get_contents())
             ob_clean();
 
-        $menu_obj = get_post($menu_item_id);
-
-        if (!empty($menu_obj->ID)) {
-            $menu_obj = wp_setup_nav_menu_item($menu_obj);
-        }
+        $menu_obj = QuadMenu::wp_setup_nav_menu_item($menu_item_id);
 
         $items = QuadMenu_Configuration::custom_nav_menu_items();
 

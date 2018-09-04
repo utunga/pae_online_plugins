@@ -25,7 +25,7 @@ if ( ! class_exists( 'Tribe__Events__Pro__Countdown_Widget' ) ) {
 			$instance = $old_instance;
 			$instance['title'] = strip_tags( $new_instance['title'] );
 			$instance['show_seconds'] = ( isset( $new_instance['show_seconds'] ) ? 1 : 0 );
-			if ( isset( $new_instance['type'] ) && in_array( $new_instance['type'], array( 'next-event', 'single-event' ) ) ) {
+			if ( isset( $new_instance['type'] ) && in_array( $new_instance['type'], array( 'next-event', 'single-event', 'future-event' ) ) ) {
 				$instance['type'] = $new_instance['type'];
 			} else {
 				$instance['type'] = 'single-event';
@@ -155,9 +155,10 @@ if ( ! class_exists( 'Tribe__Events__Pro__Countdown_Widget' ) ) {
 		public function get_output( $instance, $deprecated = null, $deprecated_ = null, $deprecated__ = null ) {
 			$time = Tribe__Timezones::localize_date( Tribe__Date_Utils::DBDATETIMEFORMAT, current_time( 'timestamp' ) );
 
-			if ( 'next-event' === $instance['type'] ) {
+			if ( 'next-event' === $instance['type'] || 'future-event' === $instance['type'] ) {
+				$upcoming_event = 'future-event' === $instance['type'] ? 'future' : 'list';
 				$event = tribe_get_events( array(
-					'eventDisplay'   => 'list',
+					'eventDisplay'   => $upcoming_event,
 					'posts_per_page' => 1,
 					'start_date'     => $time,
 				) );

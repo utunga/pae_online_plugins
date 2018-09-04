@@ -16,27 +16,18 @@ if (!function_exists('quadmenu_get_menu_theme')) {
 
     function quadmenu_get_menu_theme($location = null, $menu_id = null) {
 
-        global $quadmenu_themes, $quadmenu_locations;
+        global $quadmenu_themes, $quadmenu_active_locations;
 
         $theme = '';
 
-        if (isset($quadmenu_locations[$location])) {
-            $theme = $quadmenu_locations[$location];
+        if (isset($quadmenu_active_locations[$location])) {
+            $theme = $quadmenu_active_locations[$location];
         }
 
         if ($theme && isset($quadmenu_themes[$theme])) {
             return $theme;
         }
-
-        /* if ($menu_id) {
-
-          $theme = get_term_meta($menu_id, QUADMENU_THEME_DB_KEY, true);
-
-          if ($theme && isset($quadmenu_themes[$theme])) {
-          return $theme;
-          }
-          } */
-
+        
         if (is_array($quadmenu_themes)) {
             return current(array_keys($quadmenu_themes));
         }

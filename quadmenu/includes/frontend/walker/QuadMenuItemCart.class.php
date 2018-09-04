@@ -6,6 +6,7 @@ if (!defined('ABSPATH')) {
 class QuadMenuItemCart extends QuadMenuItem {
 
     protected $type = 'cart';
+    public $count = 'cart';
 
     function init() {
 
@@ -63,7 +64,9 @@ class QuadMenuItemCart extends QuadMenuItem {
 
     function add_item_classes_cart() {
 
-        if (empty(WC()->cart->get_cart_contents_count())) {
+        $this->count = WC()->cart->get_cart_contents_count();
+
+        if (empty($this->count)) {
             $this->item_classes[] = 'quadmenu-cart-empty';
         } else {
             $this->item->url = wc_get_cart_url();
@@ -74,17 +77,21 @@ class QuadMenuItemCart extends QuadMenuItem {
 
         $this->item_atts['data-cart-url'] = wc_get_cart_url();
 
-        $this->item_atts['data-cart-qty'] = (int) WC()->cart->get_cart_contents_count();
-
         $this->item_atts['data-cart-price'] = wc_price(0);
+
+        $this->item_atts['data-cart-qty'] = esc_attr($this->count);
+
+        if (!empty($this->args->navbar_animation_cart)) {
+            $this->item_atts['data-cart-animation'] = join(' ', array_map('sanitize_html_class', (array) $this->args->navbar_animation_cart));
+        }
     }
 
     function get_icon() {
         ob_start();
         ?>
         <span class="quadmenu-cart-magic">
-            <span class="quadmenu-icon <?php echo esc_attr($this->item->icon); ?>"></span>
-            <span class="quadmenu-cart-qty"><?php echo esc_html(WC()->cart->get_cart_contents_count()); ?></span>
+            <span class="quadmenu-icon <?php echo esc_attr($this->item->icon); ?><?php //echo esc_attr($this->item->animation->icon); ?>"></span>
+            <span class="quadmenu-cart-qty"><?php echo esc_html($this->count); ?></span>
         </span>
         <span class="quadmenu-cart-total"><?php echo WC()->cart->get_cart_total(); ?></span>
         <?php
@@ -108,7 +115,7 @@ class QuadMenuItemCart extends QuadMenuItem {
     function get_cart_text() {
         if (!empty($this->item->cart_text)) {
             ?>
-            <div class="quadmenu-cart-text"><?php echo $this->item->cart_text; ?></div>
+            <div class="quadmenu-bottom-text"><?php echo $this->item->cart_text; ?></div>
             <?php
         }
     }

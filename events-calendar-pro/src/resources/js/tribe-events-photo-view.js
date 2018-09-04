@@ -19,7 +19,7 @@
 	// @ifdef DEBUG
 	if ( dbug ) {
 		if ( !$().isotope ) {
-			debug.warn( 'TEC Debug: vendor isotope was not loaded before its dependent file tribe-photo-view.js' );
+			tec_debug.warn( 'TEC Debug: vendor isotope was not loaded before its dependent file tribe-photo-view.js' );
 		}
 	}
 	// @endif
@@ -295,7 +295,7 @@
 			if ( tt.pushstate && !ts.filter_cats ) {
 
 				// @ifdef DEBUG
-				dbug && debug.time( 'Photo View Ajax Timer' );
+				dbug && tec_debug.time( 'Photo View Ajax Timer' );
 				// @endif
 
 				/**
@@ -365,7 +365,7 @@
 							$( te ).trigger( 'ajax-success.tribe' ).trigger( 'photo-view-ajax-success.tribe' );
 
 							// @ifdef DEBUG
-							dbug && debug.timeEnd( 'Photo View Ajax Timer' );
+							dbug && tec_debug.timeEnd( 'Photo View Ajax Timer' );
 							// @endif
 
 						}
@@ -384,8 +384,8 @@
 		}
 
 		// @ifdef DEBUG
-		dbug && debug.info( 'TEC Debug: tribe-events-photo-view.js successfully loaded' );
-		ts.view && dbug && debug.timeEnd( 'Tribe JS Init Timer' );
+		dbug && tec_debug.info( 'TEC Debug: tribe-events-photo-view.js successfully loaded' );
+		ts.view && dbug && tec_debug.timeEnd( 'Tribe JS Init Timer' );
 		// @endif
 
 	} );

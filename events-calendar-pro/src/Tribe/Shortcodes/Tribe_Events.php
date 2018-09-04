@@ -298,12 +298,10 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 		$wp_query = new WP_Query( $this->query_args );
 
 		// Assets required by all our supported views
-		wp_enqueue_script( 'jquery' );
-		Tribe__Events__Template_Factory::asset_package( 'bootstrap-datepicker' );
-		Tribe__Events__Template_Factory::asset_package( 'calendar-script' );
-		Tribe__Events__Template_Factory::asset_package( 'jquery-resize' );
-		Tribe__Events__Template_Factory::asset_package( 'events-css' );
-		Tribe__Events__Pro__Template_Factory::asset_package( 'events-pro-css' );
+		tribe_asset_enqueue_group( 'events-styles' );
+		tribe_asset_enqueue( 'tribe-events-calendar-script' );
+
+		tribe_asset_enqueue_group( 'events-pro-styles' );
 
 		// Tribe Events Bar support
 		if ( $this->is_attribute_truthy( 'tribe-bar', true ) ) {
@@ -314,15 +312,13 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 
 			add_filter( 'tribe-events-bar-should-show', array( $this, 'enable_tribe_bar' ) );
 
-			remove_action( 'tribe_events_bar_before_template', array( Tribe__Events__Bar::instance(), 'disabled_bar_before' ) );
-			remove_action( 'tribe_events_bar_after_template', array( Tribe__Events__Bar::instance(), 'disabled_bar_after' ) );
+			remove_action( 'tribe_events_bar_before_template', tribe_callback( 'tec.bar', 'disabled_bar_before' ) );
+			remove_action( 'tribe_events_bar_after_template', tribe_callback( 'tec.bar', 'disabled_bar_after' ) );
 
-			Tribe__Events__Template_Factory::asset_package( 'jquery-placeholder' );
-			Tribe__Events__Pro__Template_Factory::asset_package( 'ajax-maps' );
-			Tribe__Events__Template_Factory::asset_package( 'jquery-resize' );
+			tribe_asset_enqueue( 'tribe-events-pro-geoloc' );
 
-			add_action( 'tribe_events_bar_before_template', array( Tribe__Events__Bar::instance(), 'disabled_bar_before' ) );
-			add_action( 'tribe_events_bar_after_template', array( Tribe__Events__Bar::instance(), 'disabled_bar_after' ) );
+			add_action( 'tribe_events_bar_before_template', tribe_callback( 'tec.bar', 'disabled_bar_before' ) );
+			add_action( 'tribe_events_bar_after_template', tribe_callback( 'tec.bar', 'disabled_bar_after' ) );
 
 			remove_filter( 'tribe_get_option', array( $this, 'filter_tribe_disable_bar' ) );
 		}
@@ -582,7 +578,7 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 		<?php
 
 		// Creates id='tribe-events' container
-		echo wp_kses_post( '<div ' . implode( ' ', $attributes ) . '>' );
+		echo '<div ' . implode( ' ', $attributes ) . '>';
 
 		/**
 		 * Conditionally add the before HTML to shortcode-generated calendars
@@ -593,10 +589,18 @@ class Tribe__Events__Pro__Shortcodes__Tribe_Events {
 			echo wp_kses_post( tribe_events_before_html() );
 		}
 
+		/**
+		 * Hook to add Title Bar to Shortcode Display
+		 *
+		 * @since 4.4.31
+		 *
+		 * @param Tribe__Events__Pro__Shortcodes__Tribe_Events $shortcode
+		 */
+		do_action( 'tribe_events_pro_tribe_events_shortcode_title_bar', $this );
 
 		// Include the tribe bar HTML if required
 		if ( $this->is_attribute_truthy( 'tribe-bar', true ) ) {
-			Tribe__Events__Bar::instance()->load_script();
+			tribe( 'tec.bar' )->load_script();
 			tribe_get_template_part( 'modules/bar' );
 		}
 

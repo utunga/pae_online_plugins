@@ -139,7 +139,7 @@ class QuadMenuWalker extends Walker_Nav_Menu {
 
         $nav_menu = sprintf($items_wrap, esc_attr($menu_id), esc_attr($menu_class), $menu);
 
-        return quadmenu_template($nav_menu, (object) $args);
+        return quadmenu_layout($nav_menu, (object) $args);
     }
 
 }

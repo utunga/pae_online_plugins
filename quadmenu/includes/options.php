@@ -16,14 +16,15 @@ class QuadMenu_Options {
         add_filter('redux/options/' . QUADMENU_OPTIONS . '/global_variable', array($this, 'compatibility'));
         add_filter('redux/options/' . QUADMENU_OPTIONS . '/ajax_save/response', array($this, 'developer_ajax'));
 
-        if (!is_admin() && !is_customize_preview())
-            return;
-
         add_filter('redux/options/' . QUADMENU_OPTIONS . '/sections', array($this, 'configuration'));
         add_filter('redux/options/' . QUADMENU_OPTIONS . '/sections', array($this, 'locations'));
         add_filter('redux/options/' . QUADMENU_OPTIONS . '/sections', array($this, 'responsive'));
         add_filter('redux/options/' . QUADMENU_OPTIONS . '/sections', array($this, 'themes'));
         add_filter('redux/options/' . QUADMENU_OPTIONS . '/sections', array($this, 'css'));
+
+        if (!is_admin() && !is_customize_preview())
+            return;
+
         add_filter('redux/page/' . QUADMENU_OPTIONS . '/form/before', array($this, 'remove'));
     }
 
@@ -208,7 +209,7 @@ class QuadMenu_Options {
                     'id' => 'css',
                     'type' => 'ace_editor',
                     'mode' => 'css',
-                    'title' => esc_html__('Custom CSS', 'quadmenu'),
+                    'title' => esc_html__('CSS', 'quadmenu'),
                     'subtitle' => esc_html__('Quickly add some CSS to your theme by adding it to this block.', 'quadmenu'),
                     'theme' => 'chrome',
                     'default' => $this->defaults['css']
@@ -221,73 +222,69 @@ class QuadMenu_Options {
 
     function locations($sections) {
 
-        global $_wp_registered_nav_menus;
-
-        if (!is_array($_wp_registered_nav_menus))
-            return $sections;
-
-        if (!count($_wp_registered_nav_menus))
-            return $sections;
+        global $quadmenu_locations;
 
         $theme = get_stylesheet();
 
         $all_locations_defaults = apply_filters('quadmenu_default_options_locations', array());
 
-        foreach ($_wp_registered_nav_menus as $location => $name) {
+        foreach ($quadmenu_locations as $id => $location) {
 
-            $current_location_defaults = apply_filters('quadmenu_default_options_location_' . $location, $all_locations_defaults);
+            $current_location_defaults = apply_filters('quadmenu_default_options_location_' . $id, $all_locations_defaults);
 
             foreach ($current_location_defaults as $key => $value) {
 
-                $this->defaults["{$location}_{$key}"] = $value;
+                $this->defaults["{$id}_{$key}"] = $value;
             }
         }
 
         $this->defaults = apply_filters('quadmenu_default_options', $this->defaults);
 
-        foreach ($_wp_registered_nav_menus as $location => $name) {
+        foreach ($quadmenu_locations as $id => $location) {
+
+            extract($location);
 
             $sections[] = array(
                 //'customizer' => true,
                 'subsection' => true,
                 'heading' => false,
                 'icon' => 'dashicons dashicons-editor-insertmore',
-                'id' => 'quadmenu_location_' . $location,
+                'id' => 'quadmenu_location_' . $id,
                 'title' => $name,
                 'permissions' => 'edit_theme_options',
                 'fields' => array(
                     array(
                         'customizer' => true,
                         'transport' => 'refresh',
-                        'id' => $location . '_integration',
+                        'id' => $id . '_integration',
                         'type' => 'switch',
                         'title' => esc_html__('Integration', 'quadmenu'),
                         'subtitle' => esc_html__('Integrate QuadMenu in this theme location.', 'quadmenu'),
-                        'default' => $this->defaults[$location . '_integration'],
+                        'default' => $this->defaults[$id . '_integration'],
                     ),
                     array(
                         'customizer' => true,
                         'transport' => 'refresh',
-                        'id' => $location . '_unwrap',
+                        'id' => $id . '_unwrap',
                         'type' => 'switch',
                         'title' => esc_html__('Conflicts', 'quadmenu'),
                         'subtitle' => esc_html__('Try to solve conflicts of residual theme style.', 'quadmenu'),
-                        'default' => $this->defaults[$location . '_unwrap'],
+                        'default' => $this->defaults[$id . '_unwrap'],
                         'required' => array(
-                            $location . '_integration',
+                            $id . '_integration',
                             '=',
                             1
                         ),
                     ),
                     array(
                         'customizer' => false,
-                        'id' => $location . '_editor',
+                        'id' => $id . '_editor',
                         'type' => 'switch',
                         'title' => esc_html__('Editor', 'quadmenu'),
                         'subtitle' => esc_html__('Integrate QuadMenu in this theme location.', 'quadmenu'),
                         'default' => 0,
                         'required' => array(
-                            $location . '_integration',
+                            $id . '_integration',
                             '=',
                             0
                         ),
@@ -296,16 +293,16 @@ class QuadMenu_Options {
                         'customizer' => true,
                         'transport' => 'refresh',
                         'type' => 'select',
-                        'id' => $location . '_theme',
+                        'id' => $id . '_theme',
                         'title' => __('Theme', 'quadmenu'),
                         'subtitle' => __('Select a theme for this theme location', 'quadmenu'),
                         'class' => 'current_theme',
                         'options' => (array) $GLOBALS['quadmenu_themes'],
-                        'default' => $this->defaults[$location . '_theme'],
+                        'default' => $this->defaults[$id . '_theme'],
                     ),
                     array(
                         'customizer' => false,
-                        'id' => $location . '_information',
+                        'id' => $id . '_information',
                         'type' => 'info',
                         'title' => esc_html__('Integration', 'quadmenu'),
                         'style' => 'success',
@@ -316,14 +313,14 @@ class QuadMenu_Options {
                                 , esc_html__('If your menu doesnt seem to be working properly after using Automatic Integration, the most common scenario is that you have residual styling from your theme and would need to use Manual Integration instead.', 'quadmenu')
                         ),
                         'required' => array(
-                            $location . '_integration',
+                            $id . '_integration',
                             '=',
                             1
                         ),
                     ),
                     array(
                         'customizer' => false,
-                        'id' => $location . '_manual',
+                        'id' => $id . '_manual',
                         'type' => 'info',
                         'title' => esc_html__('Manual Integration', 'quadmenu'),
                         'style' => 'info',
@@ -333,7 +330,7 @@ class QuadMenu_Options {
                                 . '<p><code>[quadmenu theme_location=&quot;%1$s&quot;]</code></p>'
                                 . '<p>Simply copy the generated shortcode and paste it where you would like the menu to appear.</p>'
                                 . '<p><code>&lt;?php quadmenu(array(&quot;theme_location&quot; => &quot;%1$s&quot;, &quot;theme&quot; => &quot;<span class="current_theme">%2$s</span>&quot;)); ?&gt;</code></p>'
-                                . '<p>Simply copy the generated PHP function code and paste it into the appropriate template in your theme.</p>', $location, 'default_theme'),
+                                . '<p>Simply copy the generated PHP function code and paste it into the appropriate template in your theme.</p>', $id, 'default_theme'),
                     ),
                 )
             );
@@ -347,7 +344,7 @@ class QuadMenu_Options {
         $this->defaults = apply_filters('quadmenu_default_options', array());
 
         $sections[] = array(
-            'customizer' => false,
+            'customizer' => true,
             'heading' => false,
             'id' => 'quadmenu_responsive',
             'title' => esc_html__('Responsive', 'quadmenu'),
@@ -433,11 +430,11 @@ class QuadMenu_Options {
                 'customizer_title' => esc_html('Layout', 'quadmenu'),
                 'subsection' => false,
                 'heading' => false,
-                'id' => 'quadmenu_layout_' . $key, //1326
+                'id' => 'quadmenu_layout_' . $key,
                 'title' => $theme,
                 'icon' => 'dashicons dashicons-menu',
                 'permissions' => 'edit_theme_options',
-                'class' => 'quadmenu_theme_' . $key, //1326
+                'class' => 'quadmenu_theme_' . $key,
                 'fields' => array(
                     array(
                         'customizer' => false,
@@ -536,7 +533,7 @@ class QuadMenu_Options {
                         'id' => $key . '_menu_divider',
                         'type' => 'section',
                         'title' => esc_html__('Menu', 'quadmenu'),
-                        'indent' => true,
+                        'indent' => false,
                     ),
                     array(
                         'customizer' => true,
@@ -584,6 +581,7 @@ class QuadMenu_Options {
                         'type' => 'text',
                         'title' => esc_html__('Selector', 'quadmenu'),
                         'subtitle' => esc_html__('The menu container will take the width of this selector.', 'quadmenu'),
+                        'placeholder' => '.container',
                         'default' => $this->defaults[$key . '_layout_width_inner_selector'],
                         'required' => array(
                             array($key . '_layout', '=', array('collapse', 'offcanvas')),
@@ -591,6 +589,16 @@ class QuadMenu_Options {
                         'required' => array(
                             array($key . '_layout_width_inner', '=', 1),
                         ),
+                    ),
+                    array(
+                        'customizer' => true,
+                        'transport' => 'selective',
+                        'id' => $key . '_layout_lazyload',
+                        'type' => 'switch',
+                        'title' => esc_html__('Lazyload', 'quadmenu'),
+                        'subtitle' => esc_html__('Defer images load until they are required.', 'quadmenu'),
+                        'default' => (bool) $this->defaults[$key . '_layout_lazyload'],
+                        'description' => esc_html__('This is a beta function, please test it carefully.', 'quadmenu'),
                     ),
                     array(
                         'customizer' => true,
@@ -635,24 +643,6 @@ class QuadMenu_Options {
                         'default' => $this->validate($this->defaults[$key . '_layout_caret'], array('show', 'hide')),
                     ),
                     array(
-                        'customizer' => true,
-                        'transport' => 'selective',
-                        'id' => $key . '_layout_hover_effect',
-                        'type' => 'select',
-                        'options' => array(
-                            '' => esc_html__('None', 'quadmenu'),
-                            'sl-top' => esc_html__('SlideBar Top (Horizontal)', 'quadmenu'),
-                            'sl-middle' => esc_html__('SlideBar Middle (Horizontal)', 'quadmenu'),
-                            'sl-bottom' => esc_html__('SlideBar Bottom (Horizontal)', 'quadmenu'),
-                        ),
-                        'title' => esc_html__('Hover Effect', 'quadmenu'),
-                        'subtitle' => esc_html__('Select the animation for the dropdowns.', 'quadmenu'),
-                        'required' => array(
-                            array($key . '_layout', '=', array('collapse', 'offcanvas')),
-                        ),
-                        'default' => $this->defaults[$key . '_layout_hover_effect'],
-                    ),
-                    array(
                         'customizer' => false,
                         'id' => $key . '_layout_classes',
                         'type' => 'text',
@@ -667,7 +657,7 @@ class QuadMenu_Options {
                         'id' => $key . '_dropdown_divider',
                         'type' => 'section',
                         'title' => esc_html__('Dropdown', 'quadmenu'),
-                        'indent' => true,
+                        'indent' => false,
                     ),
                     array(
                         'customizer' => true,
@@ -694,26 +684,6 @@ class QuadMenu_Options {
                         'subtitle' => esc_html__('Set the max height of dropdowns.', 'quadmenu'),
                         'compiler' => false,
                         'default' => (bool) $this->defaults[$key . '_layout_dropdown_maxheight'],
-                        'required' => array(
-                            array($key . '_layout', '=', array('embed', 'collapse', 'offcanvas')),
-                        ),
-                    ),
-                    array(
-                        'customizer' => true,
-                        'transport' => 'selective',
-                        'id' => $key . '_layout_animation',
-                        'type' => 'select',
-                        'options' => apply_filters('quadmenu_options_animations', array(
-                            'quadmenu_btt' => esc_html__('Bottom to top', 'quadmenu'),
-                            //'quadmenu_rtl' => esc_html__('Right to left', 'quadmenu'),
-                            //'quadmenu_ltr' => esc_html__('Left to right', 'quadmenu'),
-                            'quadmenu_hinge' => esc_html__('Hinge', 'quadmenu'),
-                            'quadmenu_fadeIn' => esc_html__('FadeIn', 'quadmenu'),
-                        )),
-                        'title' => esc_html__('Animation', 'quadmenu'),
-                        'subtitle' => esc_html__('Select the animation for the dropdowns.', 'quadmenu'),
-                        'default' => $this->defaults[$key . '_layout_animation'],
-                        'validate' => 'no_special_chars',
                         'required' => array(
                             array($key . '_layout', '=', array('embed', 'collapse', 'offcanvas')),
                         ),
@@ -802,21 +772,6 @@ class QuadMenu_Options {
                         'compiler' => true,
                         'customizer' => true,
                         'transport' => 'postMessage',
-                        'title' => esc_html__('Divider', 'quadmenu'),
-                        'subtitle' => esc_html__('Pick a color for the navbar links divider.', 'quadmenu'),
-                        'id' => $key . '_navbar_divider',
-                        'type' => 'rgba',
-                        'transparent' => false,
-                        'validate' => 'colorrgba',
-                        'options' => array(
-                            'allow_empty' => false,
-                        ),
-                        'default' => $this->defaults[$key . '_navbar_divider']
-                    ),
-                    array(
-                        'compiler' => true,
-                        'customizer' => true,
-                        'transport' => 'postMessage',
                         'title' => esc_html__('Text', 'quadmenu'),
                         'subtitle' => esc_html__('Pick a color for the navbar text.', 'quadmenu'),
                         'id' => $key . '_navbar_text',
@@ -833,7 +788,7 @@ class QuadMenu_Options {
                         'id' => $key . '_navbar',
                         'type' => 'section',
                         'title' => esc_html__('Menu', 'quadmenu'),
-                        'indent' => true
+                        'indent' => false
                     ),
                     array(
                         'compiler' => true,
@@ -869,7 +824,7 @@ class QuadMenu_Options {
                         'id' => $key . '_logo',
                         'type' => 'section',
                         'title' => esc_html__('Logo', 'quadmenu'),
-                        'indent' => true,
+                        'indent' => false,
                         'required' => array(
                             array($key . '_layout', '=', array('collapse', 'offcanvas', 'vertical', 'inherit')),
                         ),
@@ -929,7 +884,7 @@ class QuadMenu_Options {
                         'id' => $key . '_navbar_layout',
                         'type' => 'section',
                         'title' => esc_html__('Layout', 'quadmenu'),
-                        'indent' => true
+                        'indent' => false
                     ),
                     array(
                         'compiler' => true,
@@ -942,7 +897,7 @@ class QuadMenu_Options {
                         'all' => false,
                         'style' => false,
                         'color' => false,
-                        'default' => $this->defaults[$key . '_navbar_link_margin']
+                        'default' => $this->validate_border($this->defaults[$key . '_navbar_link_margin'])
                     ),
                     array(
                         'compiler' => true,
@@ -965,7 +920,7 @@ class QuadMenu_Options {
                         'id' => $key . '_link',
                         'type' => 'section',
                         'title' => esc_html__('Links', 'quadmenu'),
-                        'indent' => true
+                        'indent' => false
                     ),
                     array(
                         'compiler' => true,
@@ -1022,6 +977,21 @@ class QuadMenu_Options {
                             'allow_empty' => false,
                         ),
                         'default' => $this->defaults[$key . '_navbar_link_bg_hover']
+                    ),
+                    array(
+                        'compiler' => true,
+                        'customizer' => true,
+                        'transport' => 'postMessage',
+                        'title' => esc_html__('Divider', 'quadmenu'),
+                        'subtitle' => esc_html__('Pick a color for the navbar links divider.', 'quadmenu'),
+                        'id' => $key . '_navbar_divider',
+                        'type' => 'rgba',
+                        'transparent' => false,
+                        'validate' => 'colorrgba',
+                        'options' => array(
+                            'allow_empty' => false,
+                        ),
+                        'default' => $this->defaults[$key . '_navbar_divider']
                     ),
                     array(
                         'compiler' => true,
@@ -1096,7 +1066,7 @@ class QuadMenu_Options {
                         'id' => $key . '_icon',
                         'type' => 'section',
                         'title' => esc_html__('Icon', 'quadmenu'),
-                        'indent' => true
+                        'indent' => false
                     ),
                     array(
                         'compiler' => true,
@@ -1132,7 +1102,7 @@ class QuadMenu_Options {
                         'id' => $key . '_subtitle',
                         'type' => 'section',
                         'title' => esc_html__('Subtitle', 'quadmenu'),
-                        'indent' => true
+                        'indent' => false
                     ),
                     array(
                         'compiler' => true,
@@ -1168,7 +1138,7 @@ class QuadMenu_Options {
                         'id' => $key . '_badge',
                         'type' => 'section',
                         'title' => esc_html__('Badge', 'quadmenu'),
-                        'indent' => true
+                        'indent' => false
                     ),
                     array(
                         'compiler' => true,
@@ -1203,7 +1173,7 @@ class QuadMenu_Options {
                         'id' => $key . '_scrollbar',
                         'type' => 'section',
                         'title' => esc_html__('ScrollBar', 'quadmenu'),
-                        'indent' => true,
+                        'indent' => false,
                         'required' => array(
                             'styles_pscrollbar',
                             '=',
@@ -1412,6 +1382,16 @@ class QuadMenu_Options {
                         'color' => false,
                         'default' => $this->defaults[$key . '_mobile_link_padding']
                     ),
+                    array(
+                        'compiler' => true,
+                        'customizer' => true,
+                        'transport' => 'postMessage',
+                        'title' => esc_html__('Border', 'quadmenu'),
+                        'subtitle' => esc_html__('Pick a border color for the mobile menu links border.', 'quadmenu'),
+                        'id' => $key . '_mobile_link_border',
+                        'type' => 'border',
+                        'default' => $this->defaults[$key . '_mobile_link_border']
+                    ),
                 )
             );
 
@@ -1499,7 +1479,7 @@ class QuadMenu_Options {
                         'id' => $key . '_dropdown_link_section',
                         'type' => 'section',
                         'title' => esc_html__('Link', 'quadmenu'),
-                        'indent' => true
+                        'indent' => false
                     ),
                     array(
                         'compiler' => true,
@@ -1573,7 +1553,7 @@ class QuadMenu_Options {
                         'id' => $key . '_title',
                         'type' => 'section',
                         'title' => esc_html__('Title', 'quadmenu'),
-                        'indent' => true
+                        'indent' => false
                     ),
                     array(
                         'compiler' => true,
@@ -1606,7 +1586,7 @@ class QuadMenu_Options {
                         'id' => $key . '_icon',
                         'type' => 'section',
                         'title' => esc_html__('Icon', 'quadmenu'),
-                        'indent' => true
+                        'indent' => false
                     ),
                     array(
                         'compiler' => true,
@@ -1642,7 +1622,7 @@ class QuadMenu_Options {
                         'id' => $key . '_subtitle',
                         'type' => 'section',
                         'title' => esc_html__('Subtitle', 'quadmenu'),
-                        'indent' => true
+                        'indent' => false
                     ),
                     array(
                         'compiler' => true,
@@ -1678,7 +1658,7 @@ class QuadMenu_Options {
                         'id' => $key . '_button',
                         'type' => 'section',
                         'title' => esc_html__('Button', 'quadmenu'),
-                        'indent' => true
+                        'indent' => false
                     ),
                     array(
                         'compiler' => true,
@@ -1753,7 +1733,7 @@ class QuadMenu_Options {
                         'id' => $key . '_tab',
                         'type' => 'section',
                         'title' => esc_html__('Tab', 'quadmenu'),
-                        'indent' => true
+                        'indent' => false
                     ),
                     array(
                         'compiler' => true,
@@ -1788,7 +1768,7 @@ class QuadMenu_Options {
                         'id' => $key . '_dropdown_scrollbar_section',
                         'type' => 'section',
                         'title' => esc_html__('ScrollBar', 'quadmenu'),
-                        'indent' => true,
+                        'indent' => false,
                         'required' => array(
                             'styles_pscrollbar',
                             '=',
@@ -1910,6 +1890,354 @@ class QuadMenu_Options {
                             'lowercase' => esc_html__('Lowercase', 'quadmenu'),
                         ),
                         'default' => $this->defaults[$key . '_dropdown_link_transform']
+                    ),
+                )
+            );
+
+
+            $sections[] = array(
+                'subsection' => true,
+                'heading' => false,
+                'icon' => 'dashicons dashicons-format-video',
+                'id' => 'quadmenu_animations_' . $key,
+                'title' => esc_html__('Animations', 'quadmenu'),
+                'permissions' => 'edit_theme_options',
+                'fields' => array(
+                    array(
+                        'customizer' => true,
+                        'transport' => 'selective',
+                        'id' => $key . '_layout_hover_effect',
+                        'type' => 'select',
+                        'title' => esc_html__('Effect', 'quadmenu'),
+                        'subtitle' => esc_html__('Add an amazing effect for the hover event.', 'quadmenu'),
+                        'options' => array(
+                            'quadmenu-hover-ripple' => esc_html__('Ripple', 'quadmenu'),
+                            //'quadmenu-hover-text-top' => esc_html__('Text Top', 'quadmenu'),
+                            'quadmenu-hover-slidebar sl-top' => esc_html__('SlideBar Top (Horizontal)', 'quadmenu'),
+                            'quadmenu-hover-slidebar sl-middle' => esc_html__('SlideBar Middle (Horizontal)', 'quadmenu'),
+                            'quadmenu-hover-slidebar sl-bottom' => esc_html__('SlideBar Bottom (Horizontal)', 'quadmenu'),
+                        ),
+                        'required' => array(
+                            array($key . '_layout', '=', array('collapse', 'offcanvas', 'embed')),
+                        ),
+                        'default' => $this->defaults[$key . '_layout_hover_effect'],
+                    ),
+                    array(
+                        'customizer' => true,
+                        'transport' => 'selective',
+                        'id' => $key . '_navbar_animation_text',
+                        'type' => 'animation',
+                        'title' => esc_html__('Text', 'quadmenu'),
+                        'subtitle' => esc_html__('Select the animation for the link text.', 'quadmenu'),
+                        'options' => array(
+                            '' => esc_html__('None', 'quadmenu'),
+                            'quadmenu_bounce' => esc_html__('Bounce', 'quadmenu'),
+                            'quadmenu_pulse' => esc_html__('Pulse', 'quadmenu'),
+                            'quadmenu_rubberBand' => esc_html__('Rubber', 'quadmenu'),
+                            'quadmenu_swing' => esc_html__('Swing', 'quadmenu'),
+                            'quadmenu_tada' => esc_html__('Tada', 'quadmenu'),
+                            'quadmenu_wobble' => esc_html__('Wobble', 'quadmenu'),
+                        ),
+                        'action' => array(
+                            'load' => esc_html__('Load', 'quadmenu'),
+                            'hover' => esc_html__('Hover', 'quadmenu'),
+                            'loop' => esc_html__('Loop', 'quadmenu'),
+                        ),
+                        'speed' => array(
+                            't_200' => 200,
+                            't_300' => 300,
+                            't_500' => 500,
+                            't_700' => 700,
+                            't_1000' => 1000,
+                            't_1500' => 1500,
+                            't_2000' => 2000,
+                        ),
+                        'default' => $this->defaults[$key . '_navbar_animation_text'],
+                    ),
+                    array(
+                        'customizer' => true,
+                        'transport' => 'selective',
+                        'id' => $key . '_navbar_animation_subtitle',
+                        'type' => 'animation',
+                        'title' => esc_html__('Subtitle', 'quadmenu'),
+                        'subtitle' => esc_html__('Select the animation for the link subtitle.', 'quadmenu'),
+                        'options' => array(
+                            '' => esc_html__('None', 'quadmenu'),
+                            'quadmenu_bounce' => esc_html__('Bounce', 'quadmenu'),
+                            'quadmenu_pulse' => esc_html__('Pulse', 'quadmenu'),
+                            'quadmenu_rubberBand' => esc_html__('Rubber', 'quadmenu'),
+                            'quadmenu_swing' => esc_html__('Swing', 'quadmenu'),
+                            'quadmenu_tada' => esc_html__('Tada', 'quadmenu'),
+                            'quadmenu_wobble' => esc_html__('Wobble', 'quadmenu'),
+                        ),
+                        'action' => array(
+                            'load' => esc_html__('Load', 'quadmenu'),
+                            'hover' => esc_html__('Hover', 'quadmenu'),
+                            'loop' => esc_html__('Loop', 'quadmenu'),
+                        ),
+                        'speed' => array(
+                            't_200' => 200,
+                            't_300' => 300,
+                            't_500' => 500,
+                            't_700' => 700,
+                            't_1000' => 1000,
+                            't_1500' => 1500,
+                            't_2000' => 2000,
+                        ),
+                        'default' => $this->defaults[$key . '_navbar_animation_subtitle'],
+                    ),
+                    array(
+                        'customizer' => true,
+                        'transport' => 'selective',
+                        'id' => $key . '_navbar_animation_icon',
+                        'type' => 'animation',
+                        'title' => esc_html__('Icon', 'quadmenu'),
+                        'subtitle' => esc_html__('Select the animation for the links icons.', 'quadmenu'),
+                        'options' => array(
+                            '' => esc_html__('None', 'quadmenu'),
+                            'quadmenu_bounce' => esc_html__('Bounce', 'quadmenu'),
+                            'quadmenu_pulse' => esc_html__('Pulse', 'quadmenu'),
+                            'quadmenu_rubberBand' => esc_html__('Rubber', 'quadmenu'),
+                            'quadmenu_swing' => esc_html__('Swing', 'quadmenu'),
+                            'quadmenu_tada' => esc_html__('Tada', 'quadmenu'),
+                            'quadmenu_wobble' => esc_html__('Wobble', 'quadmenu'),
+                        ),
+                        'action' => array(
+                            'load' => esc_html__('Load', 'quadmenu'),
+                            'hover' => esc_html__('Hover', 'quadmenu'),
+                            'loop' => esc_html__('Loop', 'quadmenu'),
+                        ),
+                        'speed' => array(
+                            't_200' => 200,
+                            't_300' => 300,
+                            't_500' => 500,
+                            't_700' => 700,
+                            't_1000' => 1000,
+                            't_1500' => 1500,
+                            't_2000' => 2000,
+                        ),
+                        'default' => $this->defaults[$key . '_navbar_animation_icon'],
+                    ),
+                    array(
+                        'customizer' => true,
+                        'transport' => 'selective',
+                        'id' => $key . '_navbar_animation_badge',
+                        'type' => 'animation',
+                        'title' => esc_html__('Badge', 'quadmenu'),
+                        'subtitle' => esc_html__('Select the animation for the links badges.', 'quadmenu'),
+                        'options' => array(
+                            '' => esc_html__('None', 'quadmenu'),
+                            'quadmenu_bounce' => esc_html__('Bounce', 'quadmenu'),
+                            'quadmenu_pulse' => esc_html__('Pulse', 'quadmenu'),
+                            'quadmenu_rubberBand' => esc_html__('Rubber', 'quadmenu'),
+                            'quadmenu_swing' => esc_html__('Swing', 'quadmenu'),
+                            'quadmenu_tada' => esc_html__('Tada', 'quadmenu'),
+                            'quadmenu_wobble' => esc_html__('Wobble', 'quadmenu'),
+                        ),
+                        'action' => array(
+                            'load' => esc_html__('Load', 'quadmenu'),
+                            'hover' => esc_html__('Hover', 'quadmenu'),
+                            'loop' => esc_html__('Loop', 'quadmenu'),
+                        ),
+                        'speed' => array(
+                            't_200' => 200,
+                            't_300' => 300,
+                            't_500' => 500,
+                            't_700' => 700,
+                            't_1000' => 1000,
+                            't_1500' => 1500,
+                            't_2000' => 2000,
+                        ),
+                        'default' => $this->defaults[$key . '_navbar_animation_badge'],
+                    ),
+                    array(
+                        'customizer' => true,
+                        'transport' => 'selective',
+                        'id' => $key . '_navbar_animation_cart',
+                        'type' => 'animation',
+                        'title' => esc_html__('Cart', 'quadmenu'),
+                        'subtitle' => esc_html__('Select the animation for the cart bubble.', 'quadmenu'),
+                        'options' => array(
+                            '' => esc_html__('None', 'quadmenu'),
+                            'quadmenu_bounce' => esc_html__('Bounce', 'quadmenu'),
+                            'quadmenu_pulse' => esc_html__('Pulse', 'quadmenu'),
+                            'quadmenu_rubberBand' => esc_html__('Rubber', 'quadmenu'),
+                            'quadmenu_swing' => esc_html__('Swing', 'quadmenu'),
+                            'quadmenu_tada' => esc_html__('Tada', 'quadmenu'),
+                            'quadmenu_wobble' => esc_html__('Wobble', 'quadmenu'),
+                        ),
+                        'speed' => array(
+                            't_200' => 200,
+                            't_300' => 300,
+                            't_500' => 500,
+                            't_700' => 700,
+                        ),
+                        'default' => $this->defaults[$key . '_navbar_animation_cart'],
+                    ),
+                    array(
+                        'customizer' => true,
+                        'transport' => 'postMessage',
+                        'id' => $key . '_dropdown',
+                        'type' => 'section',
+                        'title' => esc_html__('Dropdown', 'quadmenu'),
+                        'indent' => false
+                    ),
+                    array(
+                        'customizer' => true,
+                        'transport' => 'selective',
+                        'id' => $key . '_layout_animation',
+                        'type' => 'animation',
+                        'title' => esc_html__('Dropdown', 'quadmenu'),
+                        'subtitle' => esc_html__('Select the animation for the dropdowns.', 'quadmenu'),
+                        'options' => array(
+                            'quadmenu_fadeIn' => esc_html__('FadeIn', 'quadmenu'),
+                            'quadmenu_btt' => esc_html__('Bottom to top', 'quadmenu'),
+                            'quadmenu_rtl' => esc_html__('Right to left', 'quadmenu'),
+                            'quadmenu_ltr' => esc_html__('Left to right', 'quadmenu'),
+                            'quadmenu_hinge' => esc_html__('Hinge', 'quadmenu'),
+                            'quadmenu_flip' => esc_html__('Flip', 'quadmenu'),
+                        ),
+                        'speed' => array(
+                            't_100' => 100,
+                            't_200' => 200,
+                            't_300' => 300,
+                            't_500' => 500,
+                            't_700' => 700,
+                            't_1000' => 1000,
+                        ),
+                        'default' => $this->defaults[$key . '_layout_animation'],
+                        'required' => array(
+                            array($key . '_layout', '=', array('embed', 'collapse', 'offcanvas')),
+                        ),
+                        'validate' => 'no_special_chars',
+                    ),
+                    array(
+                        'customizer' => true,
+                        'transport' => 'selective',
+                        'id' => $key . '_dropdown_animation_text',
+                        'type' => 'animation',
+                        'title' => esc_html__('Text', 'quadmenu'),
+                        'subtitle' => esc_html__('Select the animation for the menu links.', 'quadmenu'),
+                        'options' => array(
+                            '' => esc_html__('None', 'quadmenu'),
+                            'quadmenu_bounce' => esc_html__('Bounce', 'quadmenu'),
+                            'quadmenu_pulse' => esc_html__('Pulse', 'quadmenu'),
+                            'quadmenu_rubberBand' => esc_html__('Rubber', 'quadmenu'),
+                            'quadmenu_swing' => esc_html__('Swing', 'quadmenu'),
+                            'quadmenu_tada' => esc_html__('Tada', 'quadmenu'),
+                            'quadmenu_wobble' => esc_html__('Wobble', 'quadmenu'),
+                        ),
+                        'action' => array(
+                            'load' => esc_html__('Load', 'quadmenu'),
+                            'hover' => esc_html__('Hover', 'quadmenu'),
+                            'loop' => esc_html__('Loop', 'quadmenu'),
+                        ),
+                        'speed' => array(
+                            't_200' => 200,
+                            't_300' => 300,
+                            't_500' => 500,
+                            't_700' => 700,
+                            't_1000' => 1000,
+                            't_1500' => 1500,
+                            't_2000' => 2000,
+                        ),
+                        'default' => $this->defaults[$key . '_dropdown_animation_text'],
+                    ),
+                    array(
+                        'customizer' => true,
+                        'transport' => 'selective',
+                        'id' => $key . '_dropdown_animation_subtitle',
+                        'type' => 'animation',
+                        'title' => esc_html__('Subtitle', 'quadmenu'),
+                        'subtitle' => esc_html__('Select the animation for the menu links.', 'quadmenu'),
+                        'options' => array(
+                            '' => esc_html__('None', 'quadmenu'),
+                            'quadmenu_bounce' => esc_html__('Bounce', 'quadmenu'),
+                            'quadmenu_pulse' => esc_html__('Pulse', 'quadmenu'),
+                            'quadmenu_rubberBand' => esc_html__('Rubber', 'quadmenu'),
+                            'quadmenu_swing' => esc_html__('Swing', 'quadmenu'),
+                            'quadmenu_tada' => esc_html__('Tada', 'quadmenu'),
+                            'quadmenu_wobble' => esc_html__('Wobble', 'quadmenu'),
+                        ),
+                        'action' => array(
+                            'load' => esc_html__('Load', 'quadmenu'),
+                            'hover' => esc_html__('Hover', 'quadmenu'),
+                            'loop' => esc_html__('Loop', 'quadmenu'),
+                        ),
+                        'speed' => array(
+                            't_200' => 200,
+                            't_300' => 300,
+                            't_500' => 500,
+                            't_700' => 700,
+                            't_1000' => 1000,
+                            't_1500' => 1500,
+                            't_2000' => 2000,
+                        ),
+                        'default' => $this->defaults[$key . '_dropdown_animation_subtitle'],
+                    ),
+                    array(
+                        'customizer' => true,
+                        'transport' => 'selective',
+                        'id' => $key . '_dropdown_animation_icon',
+                        'type' => 'animation',
+                        'title' => esc_html__('Icon', 'quadmenu'),
+                        'subtitle' => esc_html__('Select the animation for the menu links.', 'quadmenu'),
+                        'options' => array(
+                            '' => esc_html__('None', 'quadmenu'),
+                            'quadmenu_bounce' => esc_html__('Bounce', 'quadmenu'),
+                            'quadmenu_pulse' => esc_html__('Pulse', 'quadmenu'),
+                            'quadmenu_rubberBand' => esc_html__('Rubber', 'quadmenu'),
+                            'quadmenu_swing' => esc_html__('Swing', 'quadmenu'),
+                            'quadmenu_tada' => esc_html__('Tada', 'quadmenu'),
+                            'quadmenu_wobble' => esc_html__('Wobble', 'quadmenu'),
+                        ),
+                        'action' => array(
+                            'load' => esc_html__('Load', 'quadmenu'),
+                            'hover' => esc_html__('Hover', 'quadmenu'),
+                            'loop' => esc_html__('Loop', 'quadmenu'),
+                        ),
+                        'speed' => array(
+                            't_200' => 200,
+                            't_300' => 300,
+                            't_500' => 500,
+                            't_700' => 700,
+                            't_1000' => 1000,
+                            't_1500' => 1500,
+                            't_2000' => 2000,
+                        ),
+                        'default' => $this->defaults[$key . '_dropdown_animation_icon'],
+                    ),
+                    array(
+                        'customizer' => true,
+                        'transport' => 'selective',
+                        'id' => $key . '_dropdown_animation_badge',
+                        'subtitle' => esc_html__('Select the animation for the menu links.', 'quadmenu'),
+                        'title' => esc_html__('Badge', 'quadmenu'),
+                        'type' => 'animation',
+                        'options' => array(
+                            '' => esc_html__('None', 'quadmenu'),
+                            'quadmenu_bounce' => esc_html__('Bounce', 'quadmenu'),
+                            'quadmenu_pulse' => esc_html__('Pulse', 'quadmenu'),
+                            'quadmenu_rubberBand' => esc_html__('Rubber', 'quadmenu'),
+                            'quadmenu_swing' => esc_html__('Swing', 'quadmenu'),
+                            'quadmenu_tada' => esc_html__('Tada', 'quadmenu'),
+                            'quadmenu_wobble' => esc_html__('Wobble', 'quadmenu'),
+                        ),
+                        'action' => array(
+                            'load' => esc_html__('Load', 'quadmenu'),
+                            'hover' => esc_html__('Hover', 'quadmenu'),
+                            'loop' => esc_html__('Loop', 'quadmenu'),
+                        ),
+                        'speed' => array(
+                            't_200' => 200,
+                            't_300' => 300,
+                            't_500' => 500,
+                            't_700' => 700,
+                            't_1000' => 1000,
+                            't_1500' => 1500,
+                            't_2000' => 2000,
+                        ),
+                        'default' => $this->defaults[$key . '_dropdown_animation_badge'],
                     ),
                 )
             );

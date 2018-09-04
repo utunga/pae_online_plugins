@@ -156,7 +156,7 @@ class Tribe__Events__Pro__Geo_Loc {
 				|| tribe_is_map()
 			)
 		) {
-			Tribe__Events__Pro__Template_Factory::asset_package( 'ajax-maps' );
+			tribe_asset_enqueue( 'tribe-events-pro-map' );
 		}
 	}
 
@@ -551,7 +551,7 @@ class Tribe__Events__Pro__Geo_Loc {
 		}
 
 		// Remove remaining spaces from any of the pieces of the address.
-		$pieces = array_map( 'trim', array( $_address, $_province, $_city, $_state, $_zip, $_country ) );
+		$pieces = array_map( 'trim', compact( '_address', '_province', '_city', '_state', '_zip', '_country' ) );
 		$address = implode( ' ', array_filter( $pieces ) );
 		// Remove any parenthesis from the address and his content as well
 		$address = preg_replace( '/\(.*\)/', '', $address );
@@ -605,12 +605,27 @@ class Tribe__Events__Pro__Geo_Loc {
 			return false;
 		}
 
-		if ( ! empty( $data_arr->results[0]->geometry->location->lat ) ) {
-			update_post_meta( $venueId, self::LAT, (string) $data_arr->results[0]->geometry->location->lat );
-		}
+		if ( ! empty( $data_arr->results[0] ) ) {
+			$geo_result = $data_arr->results[0];
 
-		if ( ! empty( $data_arr->results[0]->geometry->location->lng ) ) {
-			update_post_meta( $venueId, self::LNG, (string) $data_arr->results[0]->geometry->location->lng );
+			if ( ! empty( $geo_result->geometry->location->lat ) ) {
+				update_post_meta( $venueId, self::LAT, (string) $geo_result->geometry->location->lat );
+			}
+
+			if ( ! empty( $geo_result->geometry->location->lng ) ) {
+				update_post_meta( $venueId, self::LNG, (string) $geo_result->geometry->location->lng );
+			}
+
+			/**
+			 * Allows further processing of geodata for Venue.
+			 *
+			 * @since 4.4.31
+			 *
+			 * @param int    $venueId    Venue ID.
+			 * @param object $geo_result Geo result object.
+			 * @param array  $pieces     User provided address pieces.
+			 */
+			do_action( 'tribe_geoloc_save_venue_geodata', $venueId, $geo_result, $pieces );
 		}
 
 		// Saving the aggregated address so we don't need to ping google on every save

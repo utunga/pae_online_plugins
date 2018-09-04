@@ -6,7 +6,7 @@
  * Override this template in your own theme by creating a file at [your-theme]/tribe-events/pro/week/single-event.php
  *
  * @package TribeEventsCalendar
- * @version 4.4.28
+ * @version 4.4.30
  *
  */
 
@@ -170,6 +170,6 @@ $event_id = "{$event->ID}-{$day['day_number']}";
 
 <div id="tribe-events-event-<?php echo esc_attr( $event_id ); ?>" <?php echo tribe_events_week_event_attributes(); ?> class="<?php tribe_events_event_classes( $event->ID ) ?> tribe-week-event" data-tribejson='<?php echo tribe_events_template_data( $event ); ?>'>
 	<h3 class="entry-title summary">
-		<a href="<?php echo esc_url ( tribe_get_event_link( $event ) ); ?>" class="url" rel="bookmark"><?php the_title(); ?></a>
+		<a href="<?php echo esc_url ( tribe_get_event_link( $event ) ); ?>" class="url" rel="bookmark"><?php echo get_the_title( $event->ID ); ?></a>
 	</h3>
 </div>

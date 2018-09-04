@@ -2,13 +2,13 @@
 # This file is distributed under the same license as the The Events Calendar PRO package.
 msgid ""
 msgstr ""
-"Project-Id-Version: The Events Calendar PRO 4.4.29\n"
+"Project-Id-Version: The Events Calendar PRO 4.4.31\n"
 "Report-Msgid-Bugs-To: http://m.tri.be/191x\n"
-"POT-Creation-Date: 2018-07-06 20:52:49+00:00\n"
+"POT-Creation-Date: 2018-08-20 15:17:31+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2018-07-06 20:52\n"
+"PO-Revision-Date: 2018-08-20 15:17\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 
@@ -133,6 +133,15 @@ msgstr ""
 
 #: src/Tribe/Advanced_List_Widget.php:169
 msgid "Upcoming Events"
+msgstr ""
+
+#: src/Tribe/Assets.php:299
+msgctxt "Event title map marker prefix"
+msgid "%s: "
+msgstr ""
+
+#: src/Tribe/Assets.php:300
+msgid "Address: "
 msgstr ""
 
 #: src/Tribe/CSV_Importer/Fields.php:25
@@ -274,27 +283,27 @@ msgctxt "debug geodata"
 msgid "empty response"
 msgstr ""
 
-#: src/Tribe/Geo_Loc.php:639
+#: src/Tribe/Geo_Loc.php:654
 msgid ""
 "The latitude and longitude for your venue could not be fetched. The Google "
 "Maps API daily query limit has been reached!. %1$s "
 msgstr ""
 
-#: src/Tribe/Geo_Loc.php:643
+#: src/Tribe/Geo_Loc.php:658
 msgid "Enter your API Key"
 msgstr ""
 
-#: src/Tribe/Geo_Loc.php:1132
+#: src/Tribe/Geo_Loc.php:1147
 msgid "Fix venues data"
 msgstr ""
 
-#: src/Tribe/Geo_Loc.php:1176
+#: src/Tribe/Geo_Loc.php:1191
 msgid ""
 "You have venues for which we don't have Geolocation information. <a "
 "href='%s'>Click here to generate it</a>."
 msgstr ""
 
-#: src/Tribe/Geo_Loc.php:1202
+#: src/Tribe/Geo_Loc.php:1217
 msgid "Fixed geolocation data for %d venues"
 msgstr ""
 
@@ -306,7 +315,8 @@ msgstr ""
 msgid "Type: %s %s"
 msgstr ""
 
-#: src/Tribe/Geo_Loc_Filter.php:53 src/admin-views/event-meta-options.php:58
+#: src/Tribe/Geo_Loc_Filter.php:53 src/admin-views/event-meta-options.php:55
+#: src/admin-views/event-meta-options.php:120
 msgid "Dropdown"
 msgstr ""
 
@@ -483,106 +493,97 @@ msgid ""
 "conflict could be at play in your initial message."
 msgstr ""
 
-#: src/Tribe/Main.php:1451
-msgctxt "Event title map marker prefix"
-msgid "%s: "
-msgstr ""
-
-#: src/Tribe/Main.php:1452
-msgid "Address: "
-msgstr ""
-
-#: src/Tribe/Main.php:1568
+#: src/Tribe/Main.php:1581
 msgid "Settings"
 msgstr ""
 
-#: src/Tribe/Main.php:1596
+#: src/Tribe/Main.php:1609
 msgid "Venue updated. <a href=\"%s\">View venue</a>"
 msgstr ""
 
 #. translators: %s: date and time of the revision
-#: src/Tribe/Main.php:1598
+#: src/Tribe/Main.php:1611
 msgid "Venue published. <a href=\"%s\">View venue</a>"
 msgstr ""
 
-#: src/Tribe/Main.php:1599
+#: src/Tribe/Main.php:1612
 msgid "Venue submitted. <a target=\"_blank\" href=\"%s\">Preview venue</a>"
 msgstr ""
 
-#: src/Tribe/Main.php:1601
+#: src/Tribe/Main.php:1614
 msgid ""
 "Venue scheduled for: <strong>%1$s</strong>. <a target=\"_blank\" href=\"%2$s"
 "\">Preview venue</a>"
 msgstr ""
 
 #. translators: Publish box date format, see http://php.net/date
-#: src/Tribe/Main.php:1603 src/Tribe/Main.php:1613
+#: src/Tribe/Main.php:1616 src/Tribe/Main.php:1626
 msgid "M j, Y @ G:i"
 msgstr ""
 
-#: src/Tribe/Main.php:1605
+#: src/Tribe/Main.php:1618
 msgid "Venue draft updated. <a target=\"_blank\" href=\"%s\">Preview venue</a>"
 msgstr ""
 
-#: src/Tribe/Main.php:1607
+#: src/Tribe/Main.php:1620
 msgid "Organizer updated. <a href=\"%s\">View organizer</a>"
 msgstr ""
 
-#: src/Tribe/Main.php:1608
+#: src/Tribe/Main.php:1621
 msgid "Organizer published. <a href=\"%s\">View organizer</a>"
 msgstr ""
 
-#: src/Tribe/Main.php:1609
+#: src/Tribe/Main.php:1622
 msgid ""
 "Organizer submitted. <a target=\"_blank\" href=\"%s\">Preview organizer</a>"
 msgstr ""
 
-#: src/Tribe/Main.php:1611
+#: src/Tribe/Main.php:1624
 msgid ""
 "Organizer scheduled for: <strong>%1$s</strong>. <a target=\"_blank\" href="
 "\"%2$s\">Preview organizer</a>"
 msgstr ""
 
-#: src/Tribe/Main.php:1615
+#: src/Tribe/Main.php:1628
 msgid ""
 "Organizer draft updated. <a target=\"_blank\" href=\"%s\">Preview organizer</"
 "a>"
 msgstr ""
 
-#: src/Tribe/Main.php:1675
+#: src/Tribe/Main.php:1688
 msgid "Support"
 msgstr ""
 
-#: src/Tribe/Main.php:1677
+#: src/Tribe/Main.php:1690
 msgid "View All Add-Ons"
 msgstr ""
 
-#: src/Tribe/Main.php:1906
+#: src/Tribe/Main.php:1919
 msgid "Week"
 msgstr ""
 
-#: src/Tribe/Main.php:1924
+#: src/Tribe/Main.php:1937
 msgid "Photo"
 msgstr ""
 
-#: src/Tribe/Main.php:1941
+#: src/Tribe/Main.php:1954
 msgid "Week Of"
 msgstr ""
 
-#: src/Tribe/Main.php:2006
+#: src/Tribe/Main.php:2019
 msgid "Events Calendar PRO"
 msgstr ""
 
-#: src/Tribe/Main.php:2110
+#: src/Tribe/Main.php:2123
 msgid "all"
 msgstr ""
 
-#: src/Tribe/Main.php:2111 src/admin-views/event-recurrence.php:104
+#: src/Tribe/Main.php:2124 src/admin-views/event-recurrence.php:104
 #: src/admin-views/event-recurrence.php:368
 msgid "week"
 msgstr ""
 
-#: src/Tribe/Main.php:2112
+#: src/Tribe/Main.php:2125
 msgid "photo"
 msgstr ""
 
@@ -1689,25 +1690,25 @@ msgstr ""
 msgid "Recurrence meta should not be empty."
 msgstr ""
 
-#: src/Tribe/Shortcodes/Tribe_Events.php:512
+#: src/Tribe/Shortcodes/Tribe_Events.php:508
 msgid "$template_object is expected to be an actual object"
 msgstr ""
 
-#: src/Tribe/Shortcodes/Tribe_Events.php:580
+#: src/Tribe/Shortcodes/Tribe_Events.php:576
 msgid "Loading %s"
 msgstr ""
 
-#: src/Tribe/Templates/Map.php:105
+#: src/Tribe/Templates/Map.php:108
 msgid "No results were found for events in or near <strong>\"%s\"</strong>."
 msgstr ""
 
-#: src/Tribe/Templates/Map.php:107 src/Tribe/Templates/Week.php:207
+#: src/Tribe/Templates/Map.php:110 src/Tribe/Templates/Week.php:207
 msgid ""
 "No matching events listed under %s. Please try viewing the full calendar for "
 "a complete list of events."
 msgstr ""
 
-#: src/Tribe/Templates/Map.php:109
+#: src/Tribe/Templates/Map.php:112
 msgid "There were no results found."
 msgstr ""
 
@@ -1749,119 +1750,86 @@ msgstr ""
 
 #: src/admin-views/event-meta-options.php:5
 msgid ""
-"Use additional fields to add unique content fields to the event admin, which "
-"can be used by anyone who creates events. Upon publication they'll appear in "
-"the event metabox that accompanies your event listing, alongside the date/"
-"time/venue/organizer/etc. </p><p>Each new piece of data needs:"
+"Add additional fields to your event admin pages by configuring the fields "
+"and options here. Your custom additional fields then display on the event "
+"admin so that anyone creating events can add unique event information such "
+"as food options, recommended age groups, or parking details. %s"
 msgstr ""
 
-#: src/admin-views/event-meta-options.php:7
-msgid "Label (e.g. Meal Plans)"
+#: src/admin-views/event-meta-options.php:5
+msgid "Read more"
 msgstr ""
 
-#: src/admin-views/event-meta-options.php:8
-msgid "At least one option (e.g. Vegetarian, Kosher, Paleo)"
+#: src/admin-views/event-meta-options.php:29
+msgid "Add field"
 msgstr ""
 
-#: src/admin-views/event-meta-options.php:9
-msgid "Field type. These are:"
-msgstr ""
-
-#: src/admin-views/event-meta-options.php:11
-msgid "Text - for the user to input text"
-msgstr ""
-
-#: src/admin-views/event-meta-options.php:12
-msgid ""
-"Text Area - identical to a text field but providing a larger area for the "
-"user to input text"
-msgstr ""
-
-#: src/admin-views/event-meta-options.php:13
-msgid "URL - for the user to input a URL"
-msgstr ""
-
-#: src/admin-views/event-meta-options.php:14
-msgid "Checkbox - for multiple choice"
-msgstr ""
-
-#: src/admin-views/event-meta-options.php:15
-msgid "Radio Button - to select only one"
-msgstr ""
-
-#: src/admin-views/event-meta-options.php:16
-msgid "Dropdown Menu - for a dropdown menu"
-msgstr ""
-
-#: src/admin-views/event-meta-options.php:23
-msgid "Field Label"
-msgstr ""
-
-#: src/admin-views/event-meta-options.php:24
+#: src/admin-views/event-meta-options.php:43
 msgid "Field Type"
 msgstr ""
 
-#: src/admin-views/event-meta-options.php:25
-msgid "Options (one per line)"
-msgstr ""
-
-#: src/admin-views/event-meta-options.php:53
+#: src/admin-views/event-meta-options.php:50
+#: src/admin-views/event-meta-options.php:117
 msgid "Text"
 msgstr ""
 
-#: src/admin-views/event-meta-options.php:54
+#: src/admin-views/event-meta-options.php:51
+#: src/admin-views/event-meta-options.php:118
 msgid "Text Area"
 msgstr ""
 
-#: src/admin-views/event-meta-options.php:55
+#: src/admin-views/event-meta-options.php:52
+#: src/admin-views/event-meta-options.php:119
 msgid "URL"
 msgstr ""
 
-#: src/admin-views/event-meta-options.php:56
+#: src/admin-views/event-meta-options.php:53
+#: src/admin-views/event-meta-options.php:121
 msgid "Radio"
 msgstr ""
 
-#: src/admin-views/event-meta-options.php:57
+#: src/admin-views/event-meta-options.php:54
+#: src/admin-views/event-meta-options.php:122
 msgid "Checkbox"
 msgstr ""
 
-#: src/admin-views/event-meta-options.php:70
-msgid ""
-"Enter the field label as you want it to appear (this will be the label in "
-"the same way \"Start Date,\" \"Organizer,\" etc appear in the event details "
-"box on the frontend). Select whether the field will be a text field; URL "
-"field; radio buttons; checkboxes; or a dropdown. All of these with the "
-"exception of text and URL allow for multiple options to be included, which "
-"you can add — one per-line — in the right-hand column. If you feel "
-"flummoxed, we've got you covered with a %s."
+#: src/admin-views/event-meta-options.php:60
+msgid "Field Label"
 msgstr ""
 
-#: src/admin-views/event-meta-options.php:71
-msgid "tutorial that will walk you through the process"
+#: src/admin-views/event-meta-options.php:68
+msgid "Enter field label"
 msgstr ""
 
-#: src/admin-views/event-meta-options.php:74
+#: src/admin-views/event-meta-options.php:73
+msgid "Options (one per line)"
+msgstr ""
+
+#: src/admin-views/event-meta-options.php:77
+msgid "One per line"
+msgstr ""
+
+#: src/admin-views/event-meta-options.php:99
 msgid "Editor \"Custom Fields\" meta box"
 msgstr ""
 
-#: src/admin-views/event-meta-options.php:76
+#: src/admin-views/event-meta-options.php:101
 msgid "Show"
 msgstr ""
 
-#: src/admin-views/event-meta-options.php:78
+#: src/admin-views/event-meta-options.php:103
 msgid "Hide"
 msgstr ""
 
-#: src/admin-views/event-meta-options.php:81
+#: src/admin-views/event-meta-options.php:105
 msgid ""
 "Enabling this option this will not remove custom field data or "
 "functionality, just the default meta box editor."
 msgstr ""
 
-#: src/admin-views/event-meta-options.php:116
+#: src/admin-views/event-meta-options.php:157
 msgid ""
-"Are you sure you wish to remove this field and its data from all events? "
-"Once you click OK this cannot be undone."
+"Are you sure you wish to remove this field and its data from all events?"
 msgstr ""
 
 #: src/admin-views/event-meta.php:17
@@ -1902,7 +1870,7 @@ msgstr ""
 #: src/admin-views/event-recurrence.php:96
 #: src/admin-views/event-recurrence.php:325
 #: src/admin-views/event-recurrence.php:360
-#: src/admin-views/recurrence/months.php:91
+#: src/admin-views/recurrence/months.php:90
 #: src/admin-views/recurrence/years.php:136
 msgid "day"
 msgstr ""
@@ -2063,6 +2031,7 @@ msgid ""
 msgstr ""
 
 #: src/admin-views/recurrence/months.php:11
+#: src/admin-views/recurrence/years.php:63
 msgid "the same day:"
 msgstr ""
 
@@ -2125,7 +2094,7 @@ msgstr ""
 msgid "Use date:"
 msgstr ""
 
-#: src/admin-views/recurrence/months.php:100
+#: src/admin-views/recurrence/months.php:99
 #: src/admin-views/recurrence/years.php:145
 msgctxt "As in: day 12 of the month"
 msgid "of the month"
@@ -2195,10 +2164,6 @@ msgstr ""
 
 #: src/admin-views/recurrence/years.php:37
 msgid "Which month will the event recur in?"
-msgstr ""
-
-#: src/admin-views/recurrence/years.php:63
-msgid "the same day"
 msgstr ""
 
 #: src/admin-views/tribe-options-defaults.php:6
@@ -2403,7 +2368,7 @@ msgid "Limit to featured events only"
 msgstr ""
 
 #: src/admin-views/widget-admin-advanced-list.php:150
-#: src/admin-views/widget-admin-countdown.php:57
+#: src/admin-views/widget-admin-countdown.php:62
 #: src/admin-views/widget-admin-this-week.php:172
 #: src/admin-views/widget-admin-venue.php:43
 #: src/admin-views/widget-calendar.php:101
@@ -2422,21 +2387,31 @@ msgstr ""
 msgid "Next Event"
 msgstr ""
 
-#: src/admin-views/widget-admin-countdown.php:28
+#: src/admin-views/widget-admin-countdown.php:23
+msgid "Future Event"
+msgstr ""
+
+#: src/admin-views/widget-admin-countdown.php:29
+msgid ""
+"On &#8220;Future Event&#8221; type of countdown, it will go to the next "
+"event after the current event starts."
+msgstr ""
+
+#: src/admin-views/widget-admin-countdown.php:33
 msgid "Event:"
 msgstr ""
 
-#: src/admin-views/widget-admin-countdown.php:44
+#: src/admin-views/widget-admin-countdown.php:49
 msgid "Countdown Completed Text:"
 msgstr ""
 
-#: src/admin-views/widget-admin-countdown.php:46
+#: src/admin-views/widget-admin-countdown.php:51
 msgid ""
 "On &#8220;Next Event&#8221; type of countdown, this text will only show when "
 "there are no events to show."
 msgstr ""
 
-#: src/admin-views/widget-admin-countdown.php:51
+#: src/admin-views/widget-admin-countdown.php:56
 msgid "Show seconds?"
 msgstr ""
 
@@ -2517,16 +2492,16 @@ msgstr ""
 msgid "The current default phone is: %s"
 msgstr ""
 
-#: src/functions/template-tags/general.php:634
-#: src/functions/template-tags/general.php:657
+#: src/functions/template-tags/general.php:639
+#: src/functions/template-tags/general.php:662
 msgid "Date out of range."
 msgstr ""
 
-#: src/functions/template-tags/general.php:779
+#: src/functions/template-tags/general.php:784
 msgid "Recurring %s"
 msgstr ""
 
-#: src/functions/template-tags/general.php:782
+#: src/functions/template-tags/general.php:787
 msgid "(See all)"
 msgstr ""
 

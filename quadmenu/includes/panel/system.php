@@ -19,11 +19,11 @@ class QuadMenu_System extends QuadMenu_Panel {
         <div class="about-wrap quadmenu-admin-wrap">
             <h1><?php esc_html_e('System Status', 'quadmenu'); ?></h1>
             <div class="about-text">
-                <?php esc_html_e('Here you can check the system status. Yellow status means that the site will work as expected on the front end but it may cause problems in wp-admin.', 'quadmenu'); ?>
+                <?php esc_html_e('Here you can check the system status. Yellow status means that the site will work as expected on the front end but it may cause problems in your admin dashboard.', 'quadmenu'); ?>
             </div>
 
             <?php
-            global $quadmenu_locations, $_wp_registered_nav_menus;
+            global $quadmenu_active_locations, $_wp_registered_nav_menus;
 
             // Plugin name
             $this->add('Plugin config', array(
@@ -68,12 +68,12 @@ class QuadMenu_System extends QuadMenu_Panel {
             }
 
             // Menu Locations            
-            if (is_array($quadmenu_locations)) {
+            if (is_array($quadmenu_active_locations)) {
                 $this->add('Plugin config', array(
                     'check_name' => 'Active Locations',
                     'tooltip' => '',
-                    'value' => sprintf(esc_html__('You have %s active menu locations', 'quadmenu'), count($quadmenu_locations)),
-                    'status' => count($quadmenu_locations) ? 'green' : 'info'
+                    'value' => sprintf(esc_html__('You have %s active menu locations', 'quadmenu'), count($quadmenu_active_locations)),
+                    'status' => count($quadmenu_active_locations) ? 'green' : 'info'
                 ));
             }
 

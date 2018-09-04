@@ -44,7 +44,7 @@ class QuadMenu_Panel {
     }
 
     function panel() {
-        add_menu_page(QUADMENU_NAME, QUADMENU_NAME, 'edit_posts', 'quadmenu_welcome', array($this, 'welcome'), QUADMENU_URL_ASSETS . '/backend/images/icon-18x18.png', 60);
+        add_menu_page(QUADMENU_NAME, QUADMENU_NAME, 'edit_posts', 'quadmenu_welcome', array($this, 'welcome'), QUADMENU_URL_ASSETS . 'backend/images/icon-18x18.png', 60);
     }
 
     function pro() {
@@ -97,7 +97,7 @@ class QuadMenu_Panel {
             <div class="quadmenu-admin-box-text quadmenu-admin-box-three">
                 <h3><?php esc_html_e('Support', 'quadmenu'); ?></h3>
                 <p>
-                    <?php printf(__('We offer personalized support to all <a href="%s" target="_blank">QuadMenu PRO</a>. To get our support first you need to create an account and open a thread in the section.', 'quadmenu'), QUADMENU_DEMO); ?>
+                    <?php printf(__('We offer personalized support to all <a href="%s" target="_blank">QuadMenu PRO</a> users. To get support first you need to create an account and open a ticket in your account.', 'quadmenu'), QUADMENU_DEMO); ?>
                 </p>
                 <a class="button button-primary" href="<?php echo QUADMENU_SUPPORT ?>" target="_blank"><?php esc_html_e('Submit ticket', 'quadmenu'); ?></a>
             </div>
@@ -155,7 +155,7 @@ class QuadMenu_Panel {
                     <div class="feature-section">
                         <h3><?php esc_html_e('Tabs', 'quadmenu'); ?></h3>
                         <p>
-                            <?php printf(__('With the tabs, you can <a href="%s">create a tab mega menu</a> where you can include widgets or any kind of content available in your menu dashboard.', 'quadmenu'), 'http://quadmenu.com/documentation/content/tabs/?utm_source=quadmenu_admin'); ?>
+                            <?php printf(__('With the tabs, you can <a href="%s">create a tab mega menu</a> where you can include widgets or any kind of content available in your menu dashboard.', 'quadmenu'), 'https://quadmenu.com/documentation/content/tabs/?utm_source=quadmenu_admin'); ?>
                         </p>
                         <p>
                             <?php esc_html_e('This element is element allows you to set a custom background for the whole dropdown and handle the title, icons, badges and subtitles on each tab.', 'quadmenu'); ?>
@@ -169,10 +169,10 @@ class QuadMenu_Panel {
                     <div class="feature-section">
                         <h3><?php esc_html_e('Carousel', 'quadmenu'); ?></h3>
                         <p>
-                            <?php printf(__('Our carousel element allows you to create a <a href="%s">carousel mega menu</a> where you can include widgets or any kind of content available in your menu dashboard.', 'quadmenu'), 'http://quadmenu.com/documentation/content/tabs/?utm_source=quadmenu_admin'); ?>
+                            <?php printf(__('Our carousel element allows you to create a <a href="%s">carousel mega menu</a> where you can include widgets or any kind of content available in your menu dashboard.', 'quadmenu'), 'https://quadmenu.com/documentation/content/carousel/?utm_source=quadmenu_admin'); ?>
                         </p>
                         <p>
-                            <?php printf(__('This element is also available for <a href="%s">categories and archives items</a> and lets you create a carousel of the latest\'s post, products, pages and any post type available in your site.', 'quadmenu'), 'http://quadmenu.com/documentation/content/archives/?utm_source=quadmenu_admin'); ?>
+                            <?php printf(__('This element is also available for <a href="%s">categories and archives items</a> and lets you create a carousel of the latest\'s post, products, pages and any post type available in your site.', 'quadmenu'), 'https://quadmenu.com/documentation/content/archives/?utm_source=quadmenu_admin'); ?>
                         </p>
                     </div>
                 </div>
@@ -188,7 +188,7 @@ class QuadMenu_Panel {
                     <div class="feature-section">
                         <h3><?php esc_html_e('Login', 'quadmenu'); ?></h3>
                         <p>
-                            <?php printf(__('The user login element provides your menu with a <a href="%s">login and register form</a> that is displayed in a drop-down. Recently we\'ve improved this feature to include a drop-down menu for logged in users where you can display any link and a quick access to the user account.', 'quadmenu'), 'http://quadmenu.com/documentation/content/login/?utm_source=quadmenu_admin'); ?>
+                            <?php printf(__('The user login element provides your menu with a <a href="%s">login and register form</a> that is displayed in a drop-down. Recently we\'ve improved this feature to include a drop-down menu for logged in users where you can display any link and a quick access to the user account.', 'quadmenu'), 'https://quadmenu.com/documentation/content/login/?utm_source=quadmenu_admin'); ?>
                         </p>
                     </div>
                 </div>
@@ -216,7 +216,7 @@ class QuadMenu_Panel {
             <?php printf(__('Go to the <a href="%s">Options</a> panel and activate the plugin in your theme locations.', 'quadmenu'), QuadMenu::taburl(0)); ?>
                     </p>
                 </div>
-                <img src="http://quadmenu.com/wp-content/uploads/2017/12/tabs-1.png">
+                <img src="https://quadmenu.com/wp-content/uploads/2017/12/tabs-1.png">
             </div>-->
             <div class="quadmenu-admin-box-text quadmenu-admin-box-three">
                 <h3><?php esc_html_e('Personal', 'quadmenu'); ?></h3>

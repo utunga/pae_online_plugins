@@ -1,3 +1,6 @@
+#quadmenu .owl-carousel,
+#quadmenu .owl-dots,
+#quadmenu .owl-nav,
 #quadmenu .quadmenu-container,
 #quadmenu .quadmenu-navbar-nav,
 #quadmenu .quadmenu-dropdown-toggle,
@@ -220,7 +223,9 @@ sup {
 #quadmenu * {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
-    box-sizing: border-box;
+    box-sizing: border-box;    
+    transition: none;
+    animation: none;
 }
 #quadmenu *:before,
 #quadmenu *:after {

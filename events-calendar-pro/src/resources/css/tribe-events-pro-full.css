@@ -180,7 +180,7 @@
 	visibility: hidden;
 }
 
-.tribe-events-grid .type-tribe_events h3.entry-title {
+.page .tribe-events-grid .type-tribe_events h3.entry-title, .tribe-events-grid .type-tribe_events h3.entry-title {
 	color: #333;
 	font-size: 12px;
 	height: 100%;
@@ -193,7 +193,7 @@
 	text-transform: none;
 }
 
-.tribe-events-grid .type-tribe_events a {
+.page .tribe-events-grid .type-tribe_events a, .tribe-events-grid .type-tribe_events a {
 	color: #333;
 	display: block;
 	font-size: 12px;

@@ -4,8 +4,8 @@ Contributors: ModernTribe, barry.hughes, bordoni, borkweb, brianjessee, brook-tr
 Tags: events, calendar, event, venue, organizer, dates, date, google maps, conference, workshop, concert, meeting, seminar, summit, class, modern tribe, tribe, widget, pro
 Donate link: http://m.tri.be/29
 Requires at least: 4.5
-Tested up to: 4.9.6
-Stable tag: 4.4.29.2
+Tested up to: 4.9.8
+Stable tag: 4.4.31
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -204,6 +204,43 @@ Our Premium Plugins:
 
 == Changelog ==
 
+= [4.4.31] 2018-08-22 =
+
+* Fix - Enable recurrence rules to work on the initial date of recurrence, thanks to Matt for bringing this up. [44449]
+* Fix - Fix month view shortcode to url when changing between months, thanks to ltcalendar for reporting [108963]
+* Fix - Fix the view shortcodes to display the view titles, thanks to templodoser for the first report [109931]
+* Fix - Modified the REST API root url for `/all` to query for all events belonging to a series [94326]
+* Fix - Fix the Mini Calendar and Events Lists widgets styles in the customizer when previewed for the first time [111479]
+* Fix - Not being able to disable Generate JSON-LD data for the Advanded Event List Widget, thanks Craig for the report of this  [105174]
+* Fix - Yearly exclusions description along with the different date option, thanks for the report Thomas [77501]
+* Tweak - Utilize future event display on the Countdown Widget to go to the next event once the current event starts  [70769]
+* Tweak - Namespace javascript debug function to prevent conflicts causing a function found, thanks to Tom-Mulvey for the fix [110462]
+* Tweak - Updated the "Additional fields" settings page, improving the UX [109813]
+* Add - New action after saving venue geodata to the database [111353]
+
+= [4.4.30.1] 2018-08-09 =
+
+* Fix - Add back 3rd parameter to existing filter to prevent fatal errors with Yoast SEO and other 3rd party coding, thanks Laura [112058]
+
+= [4.4.30] 2018-08-01 =
+
+* Fix - Fix month view shortcode to retain category when changing between months, thanks to Robert Young and other for reporting [92891]
+* Fix - Fix permalinks regeneration when editing recurring events on same day. Thanks @ajoranger for flagging this! [104566]
+* Fix - Fix problems with filters not working when the value contains a space for the filterbar. Thanks @steviger, Sarah and others for flagging this [108811]
+* Fix - Escape each closing html element in week view tooltip to prevent PHP parser from exposing html, thanks to Karen for a solution [64834]
+* Fix - Fix Moment JS library deprecation warning when creating recurring events [107333]
+* Fix - Fix WPML wrong URL in the language switcher for the recurring events [110976]
+* Tweak - Use event id to get title of event in Week view [110531]
+* Tweak - Manage plugin assets via `tribe_assets()` [40267]
+* Deprecated - Tribe__Events__Pro__Asset__Ajax_Maps in favor of using `tribe_asset`
+* Deprecated - Tribe__Events__Pro__Asset__Ajax_Photoview in favor of using `tribe_asset`
+* Deprecated - Tribe__Events__Pro__Asset__Ajax_Weekview in favor of using `tribe_asset`
+* Deprecated - Tribe__Events__Pro__Asset__Events_Pro_Css_Default in favor of using `tribe_asset`
+* Deprecated - Tribe__Events__Pro__Asset__Events_Pro_Css_Full in favor of using `tribe_asset`
+* Deprecated - Tribe__Events__Pro__Asset__Events_Pro_Css_Skeleton in favor of using `tribe_asset`
+* Deprecated - Tribe__Events__Pro__Asset__Events_Pro_Css in favor of using `tribe_asset`
+* Deprecated - Tribe__Events__Pro__Asset__Factory in favor of using `tribe_asset`
+
 = [4.4.29.2] 2018-07-12 =
 
 * Fix - A conflict with select2 loading on the editors for WooCommerce Membership causing an ‘ajax’ error in the console [110441]
@@ -220,6 +257,7 @@ Our Premium Plugins:
 * Fix - Add validation to the recurrence exclusion "on" and "after" fields. Thanks James for reporting! [73912]
 * Fix - Make sure recurring event instances will always show in REST API responses [89571]
 * Tweak - Harden the sanitizing of values on the mini calendar [106000]
+* Tweak - Manage plugin assets via `tribe_assets()` [40267]
 
 = [4.4.28] 2018-06-20 =
 

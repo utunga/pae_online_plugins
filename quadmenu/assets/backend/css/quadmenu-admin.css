@@ -48,6 +48,45 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+body.wp-customizer .select2-drop-active,
+body.admin-color-quadmenu .select2-drop-active {
+  border-color: #d9d9d9!important;
+}
+body.wp-customizer .wp-picker-container .select2-container .select2-choice,
+body.admin-color-quadmenu .wp-picker-container .select2-container .select2-choice,
+body.wp-customizer .redux-container .select2-container .select2-choice,
+body.admin-color-quadmenu .redux-container .select2-container .select2-choice {
+  background: none;
+}
+body.wp-customizer .wp-picker-container .select2-container .select2-choice .select2-arrow,
+body.admin-color-quadmenu .wp-picker-container .select2-container .select2-choice .select2-arrow,
+body.wp-customizer .redux-container .select2-container .select2-choice .select2-arrow,
+body.admin-color-quadmenu .redux-container .select2-container .select2-choice .select2-arrow {
+  width: 26px;
+  background: #eee;
+  border-left: 1px solid #d9d9d9;
+  border-radius: 0 3px 3px 0;
+}
+body.wp-customizer .wp-picker-container .select2-container .select2-choice,
+body.admin-color-quadmenu .wp-picker-container .select2-container .select2-choice,
+body.wp-customizer .redux-container .select2-container .select2-choice,
+body.admin-color-quadmenu .redux-container .select2-container .select2-choice {
+  border: 1px solid #d9d9d9;
+  border-radius: 3px;
+}
+body.wp-customizer .wp-picker-container .select2-container .select2-choice abbr,
+body.admin-color-quadmenu .wp-picker-container .select2-container .select2-choice abbr,
+body.wp-customizer .redux-container .select2-container .select2-choice abbr,
+body.admin-color-quadmenu .redux-container .select2-container .select2-choice abbr {
+  right: 32px;
+  top: 7px;
+}
+body.wp-customizer .wp-picker-container .select2-container .select2-choice .select2-arrow b,
+body.admin-color-quadmenu .wp-picker-container .select2-container .select2-choice .select2-arrow b,
+body.wp-customizer .redux-container .select2-container .select2-choice .select2-arrow b,
+body.admin-color-quadmenu .redux-container .select2-container .select2-choice .select2-arrow b {
+  background-position-x: 5px;
+}
 body.wp-customizer .wp-picker-container .sticky-footer-fixed,
 body.admin-color-quadmenu .wp-picker-container .sticky-footer-fixed,
 body.wp-customizer .redux-container .sticky-footer-fixed,
@@ -598,6 +637,9 @@ body.wp-customizer #customize-controls .select_wrapper:nth-child(odd) {
 }
 body.wp-customizer #customize-controls .redux-field-container {
   padding: 10px 0;
+}
+body.wp-customizer #customize-controls .redux-field-container .hide {
+  display: none;
 }
 body.wp-customizer #customize-controls .redux-option-image {
   max-width: 42% !important;

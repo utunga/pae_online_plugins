@@ -59,7 +59,7 @@ class QuadMenu_Configuration {
                 'width' => array(
                     'title' => esc_html__('Width', 'quadmenu'),
                     'icon' => 'dashicons dashicons-align-left',
-                    'settings' => array('dropdown', 'stretch', 'width'),
+                    'settings' => array('stretch', 'dropdown', 'width'),
                 ),
             ),
             'desc' => esc_html__('A menu which can wrap any type of widget.', 'quadmenu'),
@@ -117,7 +117,7 @@ class QuadMenu_Configuration {
                 'general' => array(
                     'title' => esc_html__('General', 'quadmenu'),
                     'icon' => 'dashicons dashicons-admin-settings',
-                    'settings' => array('float', 'hidden'),
+                    'settings' => array('placeholder', 'search', 'float', 'hidden'),
                 ),
                 'icon' => array(
                     'title' => esc_html__('Icon', 'quadmenu'),
@@ -319,6 +319,15 @@ class QuadMenu_Configuration {
             'default' => '',
         );
 
+        $settings['placeholder'] = array(
+            'id' => 'quadmenu-settings[placeholder]',
+            'db' => 'subtitle',
+            'title' => esc_html__('Placeholder', 'quadmenu'),
+            'placeholder' => esc_html__('Enter item placeholder', 'quadmenu'),
+            'type' => 'text',
+            'default' => '',
+        );
+
         $settings['badge'] = array(
             'id' => 'quadmenu-settings[badge]',
             'db' => 'badge',
@@ -410,12 +419,12 @@ class QuadMenu_Configuration {
         $settings['stretch'] = array(
             'id' => 'quadmenu-settings[stretch]',
             'db' => 'stretch',
-            'title' => esc_html__('Stretch Dropdown', 'quadmenu'),
+            'title' => esc_html__('Dropdown Width', 'quadmenu'),
             'desc' => esc_html__('This controls the width of the dropdown and contents.', 'quadmenu'),
             'type' => 'select',
             'default' => '',
             'ops' => array(
-                'boxed' => esc_html__('Dropdown boxed', 'quadmenu'),
+                'boxed' => esc_html__('Boxed dropdown', 'quadmenu'),
                 'dropdown' => esc_html__('Stretch dropdown', 'quadmenu'),
                 //'content' => esc_html__('Stretch dropdown and content', 'quadmenu'),
                 '' => esc_html__('Custom dropdown width', 'quadmenu'),
@@ -498,7 +507,30 @@ class QuadMenu_Configuration {
             )
         );
 
+        $settings['search'] = array(
+            'id' => 'quadmenu-settings[search]',
+            'db' => 'search',
+            'title' => esc_html__('Search', 'quadmenu'),
+            'type' => 'multicheck',
+            'default' => 'post',
+            'ops' => $this->post_types()
+        );
+
         return apply_filters('quadmenu_nav_menu_item_fields', $settings, $menu_obj);
+    }
+
+    function post_types() {
+
+        $ops = array();
+
+        $post_types = get_post_types(array('show_in_nav_menus' => true), 'object');
+
+        foreach ($post_types as $post_type) {
+
+            $ops[$post_type->name] = $post_type->label;
+        }
+
+        return $ops;
     }
 
     function nav_menu_item_fields_defaults() {
@@ -664,9 +696,8 @@ class QuadMenu_Configuration {
         $defaults['layout_width'] = 0;
         $defaults['layout_width_inner'] = 0;
         $defaults['layout_width_inner_selector'] = '';
-        $defaults['layout_hover_effect'] = '';
+        $defaults['layout_lazyload'] = 0;
         $defaults['layout_dropdown_maxheight'] = 1;
-        $defaults['layout_animation'] = 'quadmenu_btt';
 
         // Fonts
         // ---------------------------------------------------------------------
@@ -727,7 +758,7 @@ class QuadMenu_Configuration {
         $defaults['navbar_link_hover'] = '#ffffff';
         $defaults['navbar_link_bg'] = 'transparent';
         $defaults['navbar_link_bg_hover'] = '#111111';
-        $defaults['navbar_link_hover_effect'] = '#fb88dd';
+        $defaults['navbar_link_hover_effect'] = 'rgba(255,255,255,0.3)';
         $defaults['navbar_link_margin'] = array('border-top' => '0', 'border-right' => '0', 'border-left' => '0', 'border-bottom' => '0');
         $defaults['navbar_link_radius'] = array('border-top' => '0', 'border-right' => '0', 'border-left' => '0', 'border-bottom' => '0');
         $defaults['navbar_link_transform'] = 'uppercase';
@@ -752,6 +783,7 @@ class QuadMenu_Configuration {
 
         $defaults['mobile_shadow'] = 'show';
         $defaults['mobile_link_padding'] = array('border-top' => '15', 'border-right' => '30', 'border-left' => '30', 'border-bottom' => '15');
+        $defaults['mobile_link_border'] = array('border-all' => '0', 'border-top' => '0', 'border-color' => 'transparent', 'border-style' => 'none');
 
         // Dropdown
         // ---------------------------------------------------------------------
@@ -793,13 +825,75 @@ class QuadMenu_Configuration {
         $defaults['dropdown_tab_bg'] = 'rgba(0,0,0,0.05)';
         $defaults['dropdown_tab_bg_hover'] = 'rgba(0,0,0,0.1)';
 
+        // Animations
+        // ---------------------------------------------------------------------
+        $defaults['layout_hover_effect'] = 'quadmenu-hover-ripple';
+
+        $defaults['navbar_animation_text'] = array(
+            'options' => '',
+            'action' => 'hover',
+            'speed' => 't_1000',
+        );
+
+        $defaults['navbar_animation_subtitle'] = array(
+            'options' => '',
+            'action' => 'hover',
+            'speed' => 't_1000',
+        );
+
+        $defaults['navbar_animation_icon'] = array(
+            'options' => '',
+            'action' => 'hover',
+            'speed' => 't_1000',
+        );
+
+        $defaults['navbar_animation_badge'] = array(
+            'options' => 'quadmenu_swing',
+            'action' => 'hover',
+            'speed' => 't_1000',
+        );
+
+        $defaults['navbar_animation_cart'] = array(
+            'options' => 'quadmenu_bounce',
+            'speed' => 't_500',
+        );
+
+        $defaults['layout_animation'] = array(
+            'options' => 'quadmenu_btt',
+            'speed' => 't_300',
+        );
+
+        $defaults['dropdown_animation_text'] = array(
+            'options' => '',
+            'action' => 'hover',
+            'speed' => 't_1000',
+        );
+
+        $defaults['dropdown_animation_subtitle'] = array(
+            'options' => '',
+            'action' => 'hover',
+            'speed' => 't_1000',
+        );
+
+        $defaults['dropdown_animation_icon'] = array(
+            'options' => '',
+            'action' => 'hover',
+            'speed' => 't_1000',
+        );
+
+        $defaults['dropdown_animation_badge'] = array(
+            'options' => 'quadmenu_swing',
+            'action' => 'loop',
+            'speed' => 't_1000',
+        );
+
         return $defaults;
     }
 
     function locations_options($defaults) {
 
         $defaults['integration'] = 0;
-        $defaults['unwrap'] = 1;
+        $defaults['unwrap'] = 0;
         $defaults['theme'] = 'default_theme';
 
         return $defaults;

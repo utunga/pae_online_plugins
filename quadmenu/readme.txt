@@ -10,7 +10,7 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 The first responsive mega menu designed for theme developers. 
 
 == Description ==
-[Premium](http://quadmenu.com/) | [Demo](http://quadmenu.com/demo/) | [Documentation](http://quadmenu.com/documentation/) | [Developers](http://quadmenu.com/documentation/developers/)
+[Premium](https://quadmenu.com/) | [Demo](https://quadmenu.com/demo/) | [Documentation](https://quadmenu.com/documentation/) | [Developers](https://quadmenu.com/documentation/developers/)
 
 QuadMenu is a WordPress Mega Menu that will allows you easily integrate the menu in your theme's project. This plugin allows you to create mega menus, tabs menus and carrousel menus in a simple and native way converting your existing menu into a powerful tool. 
 
@@ -20,7 +20,7 @@ This WordPress Mega Menu is a responsive menu, which means that the layout will 
 
 == Layouts ==
 
-[Collpase](http://quadmenu.com/layouts/collapse/) | [Offcanvas](http://quadmenu.com/layouts/offcanvas/) | [Vertical](http://quadmenu.com/layouts/vertical/) | [Sidebar](http://quadmenu.com/documentation/)
+[Collpase](https://quadmenu.com/layouts/collapse/) | [Offcanvas](https://quadmenu.com/layouts/offcanvas/) | [Vertical](https://quadmenu.com/layouts/vertical/) | [Sidebar](https://quadmenu.com/documentation/)
 
 We also must mention the variety of available layouts that highlights this wordpress mega menu over other alternatives. This is the first mega menu that’s all in one solution, as you’ll be able to create an horizontal or vertical menu in desktop devices and collapsible or offcanvas menu in mobile.
 
@@ -36,7 +36,7 @@ https://www.youtube.com/watch?v=LwywYyS3D2M
 
 == Developers ==
 
-[Developers](http://quadmenu.com/#developers) | [Documentation](http://quadmenu.com/documentation/developers/)
+[Developers](https://quadmenu.com/#developers) | [Documentation](https://quadmenu.com/documentation/developers/)
 
 QuadMenu has been designed by developers for developers. For them, we have included a vast number of filters that let you change the style and behavior of your WordPress Menu, simplifying the integration with your products.
 
@@ -78,16 +78,16 @@ QuadMenu has been designed by developers for developers. For them, we have inclu
 == Frequently Asked Questions ==
 
 = Getting Started =
-[http://quadmenu.com/documentation/quick-start/](http://quadmenu.com/documentation/quick-start/)
+[https://quadmenu.com/documentation/quick-start/](https://quadmenu.com/documentation/quick-start/)
 
 = Menu Integration =
-[http://quadmenu.com/documentation/integration/](http://quadmenu.com/documentation/integration/)
+[https://quadmenu.com/documentation/integration/](https://quadmenu.com/documentation/integration/)
 
 = Menu Content =
-[http://quadmenu.com/documentation/content/](http://quadmenu.com/documentation/content/)
+[https://quadmenu.com/documentation/content/](https://quadmenu.com/documentation/content/)
 
 = Menu Customization =
-[http://quadmenu.com/documentation/configuration/](http://quadmenu.com/documentation/configuration/)
+[https://quadmenu.com/documentation/configuration/](https://quadmenu.com/documentation/configuration/)
 
 == Installation ==
 
@@ -95,9 +95,108 @@ QuadMenu has been designed by developers for developers. For them, we have inclu
 1. Search for "QuadMenu"
 1. Click "Install"
 
-[http://www.quadmenu.com/documentation/installation/](http://www.quadmenu.com/documentation/installation/)
+[https://www.quadmenu.com/documentation/installation/](https://www.quadmenu.com/documentation/installation/)
 
 == Changelog ==
+
+= 1.5.7 =
+* Fixed. tabs height
+* Fixed. divi mobile padding
+* Fixed. widget save off save settings event
+* Improvement. New order by featured products in woocommerce archives
+* Improvement. New filter for link attributes
+
+= 1.5.6 =
+
+* Fixed. fixed issue with parents in admin
+
+= 1.5.5 =
+
+* Beta. lazy load images
+* Fixed. normalize owl carousel
+* Fixed. quadmenu widget php7 deprecated constructor
+* Fixed. quadmenu widget instance defaults
+* Fixed. mobile padding dropdown cart and login
+
+= 1.5.4 =
+
+* Fixed. update license messages
+
+= 1.5.3 =
+
+* Fixed. login css issues
+* Fixed. cart css issues
+* Fixed. fixed license validation issues
+* New. quadmenu widget
+
+= 1.5.2 =
+
+* Fixed. Astra google fonts issue
+* Fixed. Slidebar current item position
+* Fixed. divi fixed menu link colors
+* Fixed. logout link when dropdown is empty
+* Fixed. login validations for user and password
+* Fixed. login mask background
+
+= 1.5.1 =
+
+* Fixed. customizer page change
+* Fixed. sticky menu animation
+* Fixed. post type text position
+* Fixed. default menu settings
+* Fixed. menu item badge position
+* Fixed. menu item padding hidden carets
+* Improvement. customizer animations
+* Improvement. slidebar animation
+* Improvement. force customizer selective refreshed
+
+= 1.5.0 =
+
+* Fixed. search form divider css
+* Fixed. logged in hover background css
+* Fixed. background hover css without link
+* Fixed. slidebar position js
+* Fixed. fixed [] short array PHP 5.4
+* New. animation options 
+* Improvement. offcanvas animation on horizontal menu
+* Improvement. cache setup items
+* Improvement. cache children nav menu items
+* Improvement. speed general admin settings
+
+= 1.4.9 =
+
+* Fixed. post type menu item class
+
+= 1.4.8 =
+
+* Fixed. quadmenu divi module menu height
+* Fixed. divi fullwidth module quadmenu
+* Improvement. CSS field added to customizer
+* Improvement. polylang support
+* Improvement. responsive template system 
+
+= 1.4.7 =
+
+* Fixed. Undefined quadmenu_template
+* New. search placeholder
+* New. search post types
+
+= 1.4.6 =
+
+* New. quadmenu module for divi
+
+= 1.4.5 =
+
+* New. option for mobile menu links
+* Improvement. css improvements
+* Improvement. overflow hidden offcanvas layout
+
+= 1.4.4 =
+
+* Fixed. undefined theme name 
+* Fixed. Divi menu height in full menu module
+* Fixed. Polylang integration
+
 
 = 1.4.3 =
 

@@ -15,26 +15,6 @@ class QuadMenu_Admin {
 
         add_filter('plugin_action_links_' . QUADMENU_BASENAME, array($this, 'add_action_links'));
 
-        //add_filter('pre_delete_post', array($this, 'pre_delete_post'), 10, 3);
-    }
-
-    public function pre_delete_post($delete, $post, $force) {
-
-        if (!isset($_POST['nav-menu-data']))
-            return $delete;
-
-        if (!is_nav_menu_item($post->ID))
-            return $delete;
-        
-        return true;
-
-        $menu_obj = wp_setup_nav_menu_item($post);
-
-        if ($menu_obj->_invalid) {
-            return true;
-        }
-
-        return $delete;
     }
 
     function add_action_links($links) {
@@ -57,21 +37,22 @@ class QuadMenu_Admin {
 
     public function icons() {
 
-        global $pagenow, $quadmenu_locations;
+        global $pagenow, $quadmenu_active_locations;
 
         if ($pagenow != 'nav-menus.php')
             return;
 
-        if (!is_array($quadmenu_locations))
+        if (!is_array($quadmenu_active_locations))
             return;
 
-        if (!count($quadmenu_locations))
+        if (!count($quadmenu_active_locations))
             return;
+                
         ?>
         <script>
             jQuery(document).ready(function () {
                 var $list = jQuery('.menu-theme-locations'),
-                        locations = <?php echo json_encode(array_keys($quadmenu_locations)); ?>,
+                        locations = <?php echo json_encode(array_keys($quadmenu_active_locations)); ?>,
                         icon = '<img src="<?php echo esc_url(QUADMENU_URL_ASSETS . '/backend/images/icon-dark-18x18.png'); ?>" style="width: 1em; height: auto; margin: 1px 0 -1px 0; "/>';
 
                 jQuery.each(locations, function (index, item) {

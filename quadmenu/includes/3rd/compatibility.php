@@ -10,9 +10,9 @@ class QuadMenu_Compatibility extends QuadMenu_Panel {
 
     public function __construct() {
 
-        add_action('wp_ajax_quadmenu_compatibility_import', array($this, 'import'));
+        //add_action('wp_ajax_quadmenu_compatibility_import', array($this, 'import'));
 
-        add_action('admin_menu', array($this, 'panel'), 40);
+        //add_action('admin_menu', array($this, 'panel'), 40);
     }
 
     function import() {
@@ -21,9 +21,9 @@ class QuadMenu_Compatibility extends QuadMenu_Panel {
             QuadMenu::send_json_error(esc_html__('Please reload page.', 'quadmenu'));
         }
 
-        if (!empty($_REQUEST['plugin'])) {
+        if (!empty($_GET['plugin'])) {
 
-            $plugin = sanitize_text_field($_REQUEST['plugin']);
+            $plugin = sanitize_text_field($_GET['plugin']);
 
             do_action('quadmenu_compatibility_import_' . $plugin);
         }

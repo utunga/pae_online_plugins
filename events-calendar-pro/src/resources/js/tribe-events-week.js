@@ -618,7 +618,7 @@
 			if ( tt.pushstate ) {
 
 				// @ifdef DEBUG
-				dbug && debug.time( 'Week View Ajax Timer' );
+				dbug && tec_debug.time( 'Week View Ajax Timer' );
 				// @endif
 
 				/**
@@ -701,7 +701,7 @@
 						$( te ).trigger( 'ajax-success.tribe' ).trigger( 'week-view-ajax-success.tribe' );
 
 						// @ifdef DEBUG
-						dbug && debug.timeEnd( 'Week View Ajax Timer' );
+						dbug && tec_debug.timeEnd( 'Week View Ajax Timer' );
 						// @endif
 					}
 				);
@@ -725,8 +725,8 @@
 		} );
 
 		// @ifdef DEBUG
-		dbug && debug.info( 'TEC Debug: tribe-events-week.js successfully loaded' );
-		ts.view && dbug && debug.timeEnd( 'Tribe JS Init Timer' );
+		dbug && tec_debug.info( 'TEC Debug: tribe-events-week.js successfully loaded' );
+		ts.view && dbug && tec_debug.timeEnd( 'Tribe JS Init Timer' );
 		// @endif
 	} );
 

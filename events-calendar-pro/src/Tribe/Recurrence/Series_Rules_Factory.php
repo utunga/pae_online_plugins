@@ -213,12 +213,6 @@ class Tribe__Events__Pro__Recurrence__Series_Rules_Factory {
 				$rule = new Tribe__Events__Pro__Date_Series_Rules__Year( 1 );
 				break;
 			case Tribe__Events__Pro__Recurrence__Custom_Types::YEARLY_CUSTOM_TYPE:
-				$filter = null;
-
-				if ( isset( $recurrence['custom']['year']['filter'] ) ) {
-					$filter = (int) $recurrence['custom']['year']['filter'];
-				}
-
 				$year_number  = null;
 				$day_of_month = null;
 
@@ -239,8 +233,8 @@ class Tribe__Events__Pro__Recurrence__Series_Rules_Factory {
 				$rule = new Tribe__Events__Pro__Date_Series_Rules__Year(
 					$recurrence['custom']['interval'],
 					$months,
-					empty( $filter ) ? null : $year_number,
-					empty( $filter ) || empty( $recurrence['custom']['year']['day'] ) ? null : $recurrence['custom']['year']['day'],
+					isset( $recurrence['custom']['year']['number'] ) ? self::ordinalToInt( $recurrence['custom']['year']['number'] ) : null,
+					Tribe__Utils__Array::get( $recurrence, array( 'custom', 'year', 'day' ) ),
 					$day_of_month
 				);
 				break;

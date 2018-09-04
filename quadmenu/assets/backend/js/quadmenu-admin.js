@@ -681,7 +681,7 @@
 
             var $form = $('form', action);
             $.ajax({
-                type: 'POST',
+                type: 'GET',
                 url: ajaxurl,
                 data: $.param($form.serializeArrayAll()) + '&' + $.param({
                     menu_id: $('#menu').val(),
@@ -708,18 +708,22 @@
 
         if (item.hasClass('quadmenu-tab-pane-width')) {
 
-            var width = $('.quadmenu-setting-width', item);
+            var width = $('.quadmenu-setting-width', item),
+                    float = $('.quadmenu-setting-dropdown', item);
 
             if ($('#menu-item-stretch').val() !== '') {
                 width.hide();
+                float.hide();
             }
 
             item.on('change', '.menu-item-stretch', function (e) {
 
                 if ($(this).val() == '') {
                     width.fadeIn();
+                    float.fadeIn();
                 } else {
                     width.fadeOut();
+                    float.fadeOut();
                 }
 
             });
@@ -751,7 +755,7 @@
             if ($target.data('loading') || $target.data('loaded') || !$tabs.data('menu_item_panel'))
                 return;
             $.ajax({
-                type: 'POST',
+                type: 'GET',
                 url: ajaxurl,
                 data: $.param({
                     menu_id: $('#menu').val(),
@@ -1018,12 +1022,13 @@
             var $form = $(this);
 
             $.ajax({
+                // Should be POST to save widget settings
                 type: 'POST',
                 url: ajaxurl,
                 data: $.param($form.serializeArrayAll()) + '&' + $.param({
+                    action: 'quadmenu_save_widget',
                     menu_id: $('#menu').val(),
                     menu_item_id: $form.data('menu_item_id'),
-                    action: 'quadmenu_save_widget',
                     nonce: quadmenu.nonce}
                 ),
                 beforeSend: function () {
@@ -1047,7 +1052,7 @@
             if (!$widget.hasClass('open') && !$widget.data('loaded')) {
 
                 $.ajax({
-                    type: 'POST',
+                    type: 'GET',
                     url: ajaxurl,
                     data: $.param({
                         menu_id: $('#menu').val(),
@@ -1114,7 +1119,7 @@
                                 };
                             });
                             $.ajax({
-                                type: 'POST',
+                                type: 'GET',
                                 url: ajaxurl,
                                 data: {
                                     action: 'quadmenu_update_nav_menu_item',
@@ -1146,7 +1151,7 @@
                         };
                     });
                     $.ajax({
-                        type: 'POST',
+                        type: 'GET',
                         url: ajaxurl,
                         data: {
                             action: 'quadmenu_update_nav_menu_item',
@@ -1186,7 +1191,7 @@
             e.preventDefault();
             var $form = $(this);
             $.ajax({
-                type: 'POST',
+                type: 'GET',
                 url: ajaxurl,
                 data: $.param($form.serializeArrayAll()) + '&' + $.param({
                     menu_id: $('#menu').val(),
@@ -1242,7 +1247,7 @@
             return false;
 
         $.ajax({
-            type: 'POST',
+            type: 'GET',
             url: ajaxurl,
             data: {
                 action: 'quadmenu_add_nav_menu_item',
@@ -1270,14 +1275,13 @@
                     add_action_events($(this));
                     add_icon_events($(this));
                     add_sortable_events($(this));
-                    add_save_events($(this));
                     if ($(this).hasClass('quadmenu-widget')) {
                         add_widget_events($(this));
                     }
-
                     if ($(this).hasClass('quadmenu-column')) {
                         add_column_events($(this));
                     }
+                    add_save_events($(this));
 
                 });
                 $('.submit-add-to-quadmenu-column, .submit-add-to-quadmenu-tab, .submit-add-to-quadmenu-panel', $response).each(function () {
@@ -1456,7 +1460,7 @@
         if ($li.data('openning'))
             return false;
         xhr = $.ajax({
-            type: 'POST',
+            type: 'GET',
             url: ajaxurl,
             data: {
                 menu_id: $('#menu').val(),
@@ -1512,63 +1516,63 @@
     });
 
     // Customizer
-    // -------------------------------------------------------------------------
-
-    $(document).on('click.quadmenu.open', '.quadmenu_modal', function (e) {
-        e.preventDefault();
-
-        var $li = $(this).closest('li'),
-                $spinner = $(this).parent().find('.spinner'),
-                menu_item_id = $li.find('.menu-item-settings input.menu-item-data-db-id').val(),
-                menu_item_depth = parseInt($li.prop('class').match(/menu-item-depth-([0-9]+)/)[1]);
-
-        var $modal = $('#quadmenu_modal .modal-body');
-
-        if (xhr && xhr.readyState != 4)
-            xhr.abort();
-
-        if ($li.data('openning'))
-            return false;
-
-        xhr = $.ajax({
-            type: 'POST',
-            url: ajaxurl,
-            data: {
-                menu_id: $('#menu').val(),
-                menu_item_id: menu_item_id,
-                menu_item_depth: menu_item_depth,
-                action: 'quadmenu_add_nav_menu_item_settings',
-                nonce: quadmenu.nonce,
-            },
-            beforeSend: function () {
-                $spinner.addClass('is-active');
-                $li.addClass('opening').data('openning', true);
-            },
-            complete: function () {
-                $spinner.removeClass('is-active');
-                $li.removeClass('openning').removeData('openning');
-            },
-            success: function (response) {
-
-                if (response.success !== true) {
-                    console.log(response);
-                    return;
-                }
-
-                $modal.prepend(response.data);
-                $modal.modal('show');
-                add_ajax_settings($modal);
-                add_save_events($modal);
-                add_modal_events($modal);
-                add_icon_events($modal);
-                add_width_events($modal);
-                add_title_events($modal);
-                add_media_events($modal);
-                add_background_events($modal);
-                add_sortable_events($modal);
-            }
-        });
-    });
+    /* -------------------------------------------------------------------------
+     
+     $(document).on('click.quadmenu.open', '.quadmenu_modal', function (e) {
+     e.preventDefault();
+     
+     var $li = $(this).closest('li'),
+     $spinner = $(this).parent().find('.spinner'),
+     menu_item_id = $li.find('.menu-item-settings input.menu-item-data-db-id').val(),
+     menu_item_depth = parseInt($li.prop('class').match(/menu-item-depth-([0-9]+)/)[1]);
+     
+     var $modal = $('#quadmenu_modal .modal-body');
+     
+     if (xhr && xhr.readyState != 4)
+     xhr.abort();
+     
+     if ($li.data('openning'))
+     return false;
+     
+     xhr = $.ajax({
+     type: 'GET',
+     url: ajaxurl,
+     data: {
+     menu_id: $('#menu').val(),
+     menu_item_id: menu_item_id,
+     menu_item_depth: menu_item_depth,
+     action: 'quadmenu_add_nav_menu_item_settings',
+     nonce: quadmenu.nonce,
+     },
+     beforeSend: function () {
+     $spinner.addClass('is-active');
+     $li.addClass('opening').data('openning', true);
+     },
+     complete: function () {
+     $spinner.removeClass('is-active');
+     $li.removeClass('openning').removeData('openning');
+     },
+     success: function (response) {
+     
+     if (response.success !== true) {
+     console.log(response);
+     return;
+     }
+     
+     $modal.prepend(response.data);
+     $modal.modal('show');
+     add_ajax_settings($modal);
+     add_save_events($modal);
+     add_modal_events($modal);
+     add_icon_events($modal);
+     add_width_events($modal);
+     add_title_events($modal);
+     add_media_events($modal);
+     add_background_events($modal);
+     add_sortable_events($modal);
+     }
+     });
+     });*/
 
     // Themes
     // -------------------------------------------------------------------------
@@ -1637,7 +1641,7 @@
                 current_theme = $this.data('theme');
 
         $.ajax({
-            type: 'POST',
+            type: 'GET',
             url: ajaxurl,
             data: {
                 action: $this.attr('id'),
@@ -1649,46 +1653,6 @@
             },
             complete: function () {
                 $spinner.removeClass('is-active');
-            },
-            success: function (response) {
-
-                if (response.success !== true) {
-                    alert(response.data);
-                    return;
-                }
-
-                window.location.href = response.data;
-            }
-        });
-    });
-
-    // Import
-    // -------------------------------------------------------------------------
-
-    $(document).on('click.quadmenu.import', '.quadmenu_import', function (e) {
-        e.preventDefault();
-        var $this = $(this),
-                $box = $this.closest('.theme'),
-                $spinner = $box.find('.spinner');
-        if ($box.data('importing'))
-            return false;
-        if (!$box.data('plugin'))
-            return false;
-        $.ajax({
-            type: 'POST',
-            url: ajaxurl,
-            data: {
-                plugin: $box.data('plugin'),
-                action: 'quadmenu_compatibility_import',
-                nonce: quadmenu.nonce,
-            },
-            beforeSend: function () {
-                $spinner.addClass('is-active');
-                $box.addClass('importing').data('importing', true);
-            },
-            complete: function () {
-                $spinner.removeClass('is-active');
-                $box.removeClass('importing').removeData('importing');
             },
             success: function (response) {
 

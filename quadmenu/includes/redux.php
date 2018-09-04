@@ -29,6 +29,8 @@ class QuadMenu_Redux {
         add_filter('redux/' . QUADMENU_OPTIONS . '/field/class/icons', array($this, 'field_icons'));
 
         add_filter('redux/' . QUADMENU_OPTIONS . '/field/class/rgba', array($this, 'field_rgba'));
+        
+        add_filter('redux/' . QUADMENU_OPTIONS . '/field/class/animation', array($this, 'field_animation'));
 
         add_filter('redux/' . QUADMENU_OPTIONS . '/panel/template/header.tpl.php', array($this, 'header'));
 
@@ -121,6 +123,10 @@ class QuadMenu_Redux {
         return QUADMENU_PATH . 'lib/redux/icons/field_icons.php';
     }
 
+    function field_animation($field) {
+        return QUADMENU_PATH . 'lib/redux/animation/field_animation.php';
+    }
+
     function reload($return_array) {
 
         if (get_transient('_quadmenu_saved_reload')) {
@@ -152,7 +158,7 @@ class QuadMenu_Redux {
             'allow_sub_menu' => true,
             'menu_title' => QUADMENU_NAME,
             'page' => QUADMENU_NAME,
-            'google_api_key' => 'AIzaSyBezI3iiTQh5FbkfMhBwG1St41i_PqB3VQ',
+            'google_api_key' => 'AIzaSyBNsacnx37lZpIIyDyNAjGC1qdE7Z0CrEQ',
             'async_typography' => false,
             'show_options_object' => false,
             'global_variable' => 'quadmenu',

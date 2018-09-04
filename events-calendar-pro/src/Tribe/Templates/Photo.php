@@ -24,10 +24,11 @@ if ( ! class_exists( 'Tribe__Events__Pro__Templates__Photo' ) ) {
 		 *
 		 * @var array
 		 **/
-		protected $asset_packages = array( 'ajax-photoview' );
+		protected $asset_packages = array();
 
 		protected function hooks() {
 			parent::hooks();
+			tribe_asset_enqueue( 'tribe-events-pro-photo' );
 			add_filter( 'tribe_events_header_attributes', array( $this, 'header_attributes' ) );
 		}
 
